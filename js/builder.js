@@ -8,6 +8,7 @@
 
   var CATS = [
     { id: "case",     name: "Case",         thumb: "t-case" },
+    { id: "band",     name: "Band / bracelet", thumb: "t-band" },
     { id: "movement", name: "Movement",     thumb: "t-mov" },
     { id: "dial",     name: "Dial",         thumb: "t-dial" },
     { id: "handset",  name: "Handset",      thumb: "t-hands" },
@@ -16,8 +17,8 @@
   ];
 
   /* default = the watch from the films */
-  var state = { case: 0, movement: 0, dial: 0, handset: 0, seconds: 0, datewheel: 0 };
-  var filters = { case: null, movement: null, dial: null, handset: null, seconds: null, datewheel: null };
+  var state = { case: 0, band: 0, movement: 0, dial: 0, handset: 0, seconds: 0, datewheel: 0 };
+  var filters = { case: null, band: null, movement: null, dial: null, handset: null, seconds: null, datewheel: null };
 
   function part(cat) { return PARTS[cat][state[cat]]; }
 
@@ -90,22 +91,32 @@
     });
   }
 
-  /* ── preview stack ───────────────────────────────── */
+  /* ── preview stack (z-order from LAYERS, per-part override) ── */
+  function z(catKey, p) { return (p && p.layer != null) ? p.layer : LAYERS[catKey]; }
+  function setLayer(id, catKey) {
+    var p = part(catKey), img = document.getElementById(id);
+    img.src = p.img;
+    img.style.zIndex = z(catKey, p);
+  }
   function applyPreview() {
-    document.getElementById("ly-case").src = part("case").img;
-    document.getElementById("ly-dial").src = part("dial").img;
-    document.getElementById("ly-hands").src = part("handset").img;
+    setLayer("ly-case", "case");
+    setLayer("ly-band", "band");
+    setLayer("ly-mov", "movement");
+    setLayer("ly-dial", "dial");
+    setLayer("ly-hands", "handset");
     document.getElementById("ly-sec").src = part("seconds").img;
+    document.getElementById("sec-rot").style.zIndex = z("seconds", part("seconds"));
 
     var mov = part("movement");
     var dw = part("datewheel");
     var ovls = (mov.windows || []).map(function (w) {
-      if (w === "gmt") return "parts/ovl-gmt.png";
-      return (dw.imgs && dw.imgs[w]) || "";
+      if (w === "gmt") return { src: "parts/ovl-gmt.png", z: LAYERS.gmt };
+      var s = dw.imgs && dw.imgs[w];
+      return s ? { src: s, z: (dw.layer != null ? dw.layer : LAYERS.window) } : null;
     }).filter(Boolean);
     [0, 1].forEach(function (i) {
       var img = document.getElementById("ly-ovl" + (i + 1));
-      if (ovls[i]) { img.src = ovls[i]; img.style.display = ""; }
+      if (ovls[i]) { img.src = ovls[i].src; img.style.zIndex = ovls[i].z; img.style.display = ""; }
       else { img.removeAttribute("src"); img.style.display = "none"; }
     });
 
@@ -130,9 +141,10 @@
      end, bump VERSION. Older codes keep loading (new picks default 0). */
   var HISTORY = {
     2: ["case", "movement", "dial", "handset", "seconds"],
-    3: ["case", "movement", "dial", "handset", "seconds", "datewheel"]
+    3: ["case", "movement", "dial", "handset", "seconds", "datewheel"],
+    4: ["case", "movement", "dial", "handset", "seconds", "datewheel", "band"]
   };
-  var VERSION = 3;
+  var VERSION = 4;
 
   function digits(s) { return [VERSION].concat(HISTORY[VERSION].map(function (id) { return s[id]; })); }
   function checksum(ds) {

@@ -7,7 +7,9 @@
    1. Save a transparent PNG of the part, aligned on the same
       840×1120 canvas (watch centre at exactly 50%/50%,
       dial diameter ≈ 38% of canvas width) into /parts.
-      • cases include bezel, crown and strap/bracelet
+      • cases include bezel and crown, with the dial area left
+        TRANSPARENT (cases render on top of the dial); bands and
+        bracelets are their own category and layer
       • dials include indices and minute track
       • handsets are hour+minute set at 10:08
       • seconds hands are drawn pointing at 12 (they sweep live)
@@ -37,22 +39,38 @@
       commission email.
    ═══════════════════════════════════════════════════════ */
 
+/* ═══ LAYER ORDER ═══
+   Higher number = closer to the viewer. Edit freely — this is the whole
+   stacking system. Any individual part can override its category with
+   its own `layer: <number>` field (e.g. a domed-crystal part at 90).
+   `window` and `gmt` are the movement's aperture/hand overlays. */
+var LAYERS = {
+  band: 10,        /* straps & bracelets — under everything            */
+  movement: 20,    /* visible through skeleton / cutout dials          */
+  dial: 30,
+  window: 40,      /* date & day-date apertures                        */
+  gmt: 45,
+  handset: 50,
+  seconds: 60,
+  case: 70         /* on top: the bezel overlaps the dial edge,        */
+};                 /* like a real watch                                */
+
 var PARTS = {
 
   case: [
     { id: "case-oct-rose",    name: "Octagon · rose gold", vendor: "ACHUTA stock", url: "",
-      tags: ["Octagon", "Rose gold", "Bracelet"], img: "parts/case-oct-rose.png",
-      note: "Integrated bracelet" },
+      tags: ["Octagon", "Rose gold"], img: "parts/case-oct-rose.png",
+      note: "Octagonal bezel · 8 screws" },
     { id: "case-oct-steel",   name: "Octagon · steel", vendor: "ACHUTA stock", url: "",
-      tags: ["Octagon", "Steel", "Bracelet"], img: "parts/case-oct-steel.png",
-      note: "Integrated bracelet" },
+      tags: ["Octagon", "Steel"], img: "parts/case-oct-steel.png",
+      note: "Octagonal bezel · 8 screws" },
     { id: "case-diver-steel", name: "Diver · steel", vendor: "ACHUTA stock", url: "",
-      tags: ["Round", "Steel", "Rubber"], img: "parts/case-diver-steel.png",
-      note: "120-click bezel · rubber strap · fits dials ≤ 28.5 mm",
+      tags: ["Round", "Steel"], img: "parts/case-diver-steel.png",
+      note: "120-click bezel · fits dials ≤ 28.5 mm",
       accepts: { dial_mm: { max: 28.5 } } },
     { id: "case-cushion-onyx", name: "Cushion · onyx", vendor: "ACHUTA stock", url: "",
-      tags: ["Cushion", "Onyx", "Leather"], img: "parts/case-cushion-onyx.png",
-      note: "Leather noir strap · fits dials ≤ 28.5 mm",
+      tags: ["Cushion", "Onyx"], img: "parts/case-cushion-onyx.png",
+      note: "Fits dials ≤ 28.5 mm",
       accepts: { dial_mm: { max: 28.5 } } }
   ],
 
@@ -127,5 +145,20 @@ var PARTS = {
     { id: "dw-black", name: "Date wheel · black", vendor: "Seiko · TMI", url: "",
       tags: ["Black"], img: "parts/ovl-date-black.png",
       imgs: { date: "parts/ovl-date-black.png", daydate: "parts/ovl-daydate-black.png" } }
+  ],
+
+  band: [
+    { id: "band-bracelet-rose",  name: "Bracelet · rose gold", vendor: "ACHUTA stock", url: "",
+      tags: ["Bracelet", "Rose gold"], img: "parts/band-bracelet-rose.png" },
+    { id: "band-bracelet-steel", name: "Bracelet · steel", vendor: "ACHUTA stock", url: "",
+      tags: ["Bracelet", "Steel"], img: "parts/band-bracelet-steel.png" },
+    { id: "band-bracelet-gold",  name: "Bracelet · yellow gold", vendor: "ACHUTA stock", url: "",
+      tags: ["Bracelet", "Gold"], img: "parts/band-bracelet-gold.png" },
+    { id: "band-rubber-noir",    name: "Rubber · noir", vendor: "ACHUTA stock", url: "",
+      tags: ["Rubber", "Noir"], img: "parts/band-rubber-noir.png" },
+    { id: "band-leather-noir",   name: "Leather · noir", vendor: "ACHUTA stock", url: "",
+      tags: ["Leather", "Noir"], img: "parts/band-leather-noir.png" },
+    { id: "band-leather-cognac", name: "Leather · cognac", vendor: "ACHUTA stock", url: "",
+      tags: ["Leather", "Cognac"], img: "parts/band-leather-cognac.png" }
   ]
 };

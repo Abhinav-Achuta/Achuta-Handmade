@@ -33,8 +33,8 @@ tools/alignment-template.png  guide overlay for positioning YOUR part photos
 ## The builder & build codes
 
 `builder.html` (linked from the Build your own CTA and the header) is a
-parts-catalogue configurator: clients click real parts — case, movement,
-dial, handset, sweeping seconds hand, date wheel — and each choice swaps a transparent
+parts-catalogue configurator: clients click real parts — case, band/bracelet,
+movement, dial, handset, sweeping seconds hand, date wheel — and each choice swaps a transparent
 image layer in the live stacked preview. Filter chips above each category
 narrow parts by tags (Octagon / Round, Warm / Dark, Baton / Sword, …).
 Movements drive compatibility automatically: NH35 adds a date window,
@@ -57,6 +57,28 @@ Every configuration produces a **build code** like `AH-5222-222B`:
   are rejected by the checksum instead of loading the wrong build.
 - Codes are versioned: codes issued before you add parts or whole
   categories keep loading forever (see HISTORY in `js/builder.js`).
+
+### Layer order — deciding what sits on top
+
+The stacking order of every image is one map at the top of
+`js/parts-data.js`:
+
+```js
+var LAYERS = { band: 10, movement: 20, dial: 30, window: 40,
+               gmt: 45, handset: 50, seconds: 60, case: 70 };
+```
+
+Higher number = closer to the viewer. Edit these numbers freely — cases
+sit on top by default so the bezel overlaps the dial edge like a real
+watch (case PNGs have a transparent dial aperture punched through), the
+movement sits at the bottom where it shows through any future skeleton
+or cutout dial, and bands sit under everything. Any INDIVIDUAL part can
+override its category with its own `layer: <number>` field — e.g. a
+domed-crystal part at `layer: 90` to sit above the case. Bands and
+cases are separate categories, so any strap pairs with any case.
+
+Note: build codes issued before the band category existed (v2/v3) load
+with the default band, since bands weren't encoded back then.
 
 ### Adding a whole new category (worked example: Date wheel)
 

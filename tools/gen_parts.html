@@ -22,6 +22,24 @@
   var host = document.getElementById("host");
 
   function el(t, a, p) { var e = document.createElementNS(NS, t); for (var k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+  function octPath(cx, cy, R) {
+    var d = "";
+    for (var i = 0; i < 8; i++) {
+      var a = (22.5 + i * 45) * Math.PI / 180;
+      d += (i ? "L" : "M") + (cx + R * Math.cos(a)).toFixed(1) + " " + (cy + R * Math.sin(a)).toFixed(1) + " ";
+    }
+    return d + "Z";
+  }
+  function holePath(cx, cy, r) {
+    return "M " + (cx + r) + " " + cy + " A " + r + " " + r + " 0 1 0 " + (cx - r) + " " + cy +
+           " A " + r + " " + r + " 0 1 0 " + (cx + r) + " " + cy + " Z";
+  }
+  function roundRectPath(x, y, w, h, r) {
+    return "M " + (x + r) + " " + y + " H " + (x + w - r) + " A " + r + " " + r + " 0 0 1 " + (x + w) + " " + (y + r) +
+           " V " + (y + h - r) + " A " + r + " " + r + " 0 0 1 " + (x + w - r) + " " + (y + h) +
+           " H " + (x + r) + " A " + r + " " + r + " 0 0 1 " + x + " " + (y + h - r) +
+           " V " + (y + r) + " A " + r + " " + r + " 0 0 1 " + (x + r) + " " + y + " Z";
+  }
   function octagon(cx, cy, R) {
     var pts = [];
     for (var i = 0; i < 8; i++) { var a = (22.5 + i * 45) * Math.PI / 180; pts.push((cx + R * Math.cos(a)).toFixed(1) + "," + (cy + R * Math.sin(a)).toFixed(1)); }
@@ -106,14 +124,13 @@
   /* ── CASES (include strap/bracelet, bezel, crown, dark dial-seat) ── */
   function caseOct(id, metal) {
     var s = newPart(id, "octagon case · " + metal);
-    bracelet(s, id, metal);
     crown(s, id, metal, false);
-    el("polygon", { points: octagon(CX, CY, 126), fill: M(id, metal), stroke: "rgba(0,0,0,.55)", "stroke-width": 1.5, "stroke-linejoin": "round" }, s);
+    el("path", { d: octPath(CX, CY, 126) + " " + holePath(CX, CY, 86), "fill-rule": "evenodd", fill: M(id, metal), stroke: "rgba(0,0,0,.55)", "stroke-width": 1.5, "stroke-linejoin": "round" }, s);
     el("polygon", { points: octagon(CX, CY, 126), fill: "none", stroke: "rgba(255,255,255,.12)", "stroke-linejoin": "round" }, s);
-    el("polygon", { points: octagon(CX, CY, 102), fill: M(id, metal), stroke: "rgba(0,0,0,.5)", "stroke-width": 1.2, "stroke-linejoin": "round" }, s);
+    el("path", { d: octPath(CX, CY, 102) + " " + holePath(CX, CY, 86), "fill-rule": "evenodd", fill: M(id, metal), stroke: "rgba(0,0,0,.5)", "stroke-width": 1.2, "stroke-linejoin": "round" }, s);
     el("polygon", { points: octagon(CX, CY, 102), fill: "none", stroke: "rgba(255,255,255,.16)", "stroke-width": .8, "stroke-linejoin": "round" }, s);
     screwsOct(s, id);
-    chapter(s);
+    el("circle", { cx: CX, cy: CY, r: 83, fill: "none", stroke: "#0d0c0b", "stroke-width": 6 }, s);   /* chapter ring 80–86 */
   }
   caseOct("case-oct-rose", "rose");
   caseOct("case-oct-steel", "steel");
@@ -121,29 +138,39 @@
   (function caseDiver() {
     var id = "case-diver-steel";
     var s = newPart(id, "diver case · steel");
-    rubber(s);
     crown(s, id, "steel", true);
-    el("circle", { cx: CX, cy: CY, r: 122, fill: M(id, "steel"), stroke: "rgba(0,0,0,.55)", "stroke-width": 1.5 }, s);
-    el("circle", { cx: CX, cy: CY, r: 106, fill: M(id, "steelHi"), stroke: "rgba(0,0,0,.4)" }, s);
-    el("circle", { cx: CX, cy: CY, r: 100, fill: "#101114", stroke: "rgba(255,255,255,.14)", "stroke-width": .8 }, s);
+    el("path", { d: holePath(CX, CY, 122) + " " + holePath(CX, CY, 100), "fill-rule": "evenodd", fill: M(id, "steel"), stroke: "rgba(0,0,0,.55)", "stroke-width": 1.5 }, s);
+    el("circle", { cx: CX, cy: CY, r: 103, fill: "none", stroke: M(id, "steelHi"), "stroke-width": 6 }, s);
+    el("circle", { cx: CX, cy: CY, r: 93, fill: "none", stroke: "#101114", "stroke-width": 14 }, s);
     for (var m = 0; m < 60; m++) {
       var a = m * 6 * Math.PI / 180, big = m % 5 === 0, r1 = big ? 90 : 94;
       el("line", { x1: CX + r1 * Math.sin(a), y1: CY - r1 * Math.cos(a), x2: CX + 98 * Math.sin(a), y2: CY - 98 * Math.cos(a), stroke: big ? "#e8e4da" : "rgba(232,228,218,.5)", "stroke-width": big ? 2 : 1 }, s);
     }
     el("polygon", { points: (CX - 5) + "," + (CY - 98) + " " + (CX + 5) + "," + (CY - 98) + " " + CX + "," + (CY - 88), fill: "#e8e4da" }, s);
-    chapter(s);
+    el("circle", { cx: CX, cy: CY, r: 83, fill: "none", stroke: "#0d0c0b", "stroke-width": 6 }, s);
   })();
 
   (function caseCushion() {
     var id = "case-cushion-onyx";
     var s = newPart(id, "cushion case · onyx");
-    leather(s, "#1d1713");
     crown(s, id, "onyx", false);
-    el("rect", { x: CX - 116, y: CY - 116, width: 232, height: 232, rx: 62, fill: M(id, "onyx"), stroke: "rgba(0,0,0,.6)", "stroke-width": 1.5 }, s);
+    el("path", { d: roundRectPath(CX - 116, CY - 116, 232, 232, 62) + " " + holePath(CX, CY, 98), "fill-rule": "evenodd", fill: M(id, "onyx"), stroke: "rgba(0,0,0,.6)", "stroke-width": 1.5 }, s);
     el("rect", { x: CX - 116, y: CY - 116, width: 232, height: 232, rx: 62, fill: "none", stroke: "rgba(255,255,255,.10)" }, s);
-    el("circle", { cx: CX, cy: CY, r: 98, fill: M(id, "onyxHi"), stroke: "rgba(0,0,0,.5)" }, s);
-    chapter(s);
+    el("circle", { cx: CX, cy: CY, r: 89, fill: "none", stroke: M(id, "onyxHi"), "stroke-width": 18 }, s);
+    el("circle", { cx: CX, cy: CY, r: 82, fill: "none", stroke: "#0d0c0b", "stroke-width": 4 }, s);
   })();
+
+  /* ── BANDS / BRACELETS (standalone layers, sit under every case) ── */
+  function bandBracelet(id, metal) {
+    var s = newPart(id, "bracelet · " + metal);
+    bracelet(s, id, metal);
+  }
+  bandBracelet("band-bracelet-rose", "rose");
+  bandBracelet("band-bracelet-steel", "steel");
+  bandBracelet("band-bracelet-gold", "gold");
+  (function () { var s = newPart("band-rubber-noir", "rubber · noir"); rubber(s); })();
+  (function () { var s = newPart("band-leather-noir", "leather · noir"); leather(s, "#1d1713"); })();
+  (function () { var s = newPart("band-leather-cognac", "leather · cognac"); leather(s, "#7a4526"); })();
 
   /* ── DIALS (texture + ticks + indices + logo, glass sheen) ── */
   function dialBase(id, label, base, textCol, tickCol) {
