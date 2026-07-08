@@ -110,15 +110,68 @@ the shipped files is the worked example to copy):
 Rule of thumb: everything is append-only — parts within a category,
 categories within HISTORY — and codes survive any addition.
 
-### Colour variants (one card, colour dots)
+### Prices & the running estimate
 
-Parts that come in several colours can share a `group: "name"` field
-plus a `swatch: "#hex"` each — they render as ONE card with a colour
-dot per variant; pressing a dot switches colour (image, name, and code
-all follow). Each variant is still its own part with its own code
-index, so append variants like any other part and old codes stay
-valid. Incompatible variants grey out per-dot. The octagon case and
-integrated bracelet in the shipped catalogue are the worked examples.
+Give any part a `price:` in `js/parts-data.js` and it appears as a chip
+on the card and joins the "Estimated parts total" above the build code,
+which recomputes on every selection and rides along in the commission
+email. `price: 0` displays as "Included" (the with-handset seconds hand
+and stock white date wheel use this); omit `price` to show nothing.
+Currency symbol and the disclaimer line live in the `PRICING` block at
+the top of the same file. Prices are never stored in build codes —
+loading an old code prices it at today's numbers. ALL SEEDED PRICES ARE
+PLACEHOLDERS — edit them.
+
+### Colour variants (one card, colour dots) — worked example
+
+Parts that come in several colours can render as ONE card with a colour
+dot per variant. The live example in the shipped catalogue is the Royal
+Oak case (rose + steel). Creating it took two edits in
+`js/parts-data.js`:
+
+**Edit 1 — tag the existing part with a group and a dot colour:**
+
+```js
+{ id: "case-royal-oak-rose", name: "Royal Oak · rose gold", vendor: "nomods", ...
+  group: "royal-oak", swatch: "#c98a5f",
+  ...all other fields unchanged... },
+```
+
+**Edit 2 — APPEND the new colourway at the END of its category list,
+same `group`, its own `swatch` (and its image in `/parts`):**
+
+```js
+{ id: "case-royal-oak-steel", name: "Royal Oak · steel", vendor: "nomods", url: "",
+  group: "royal-oak", swatch: "#cfd2d6", price: 95,
+  tags: ["Royal Oak", "Steel"], img: "parts/case-royal-oak-steel.png",
+  note: "Octagonal bezel · 37mm lug-to-lug",
+  accepts: { mov_brand: "nh" },
+  compatible: { band: ["band-bracelet-rose"] } }
+```
+
+That's the whole recipe: same `group` string, one `swatch` per variant.
+The entries collapse into a single card; pressing a dot swaps the
+preview image, the card's name and price chip, and the build code. A
+third colour is just another appended entry with the same group — its
+dot appears automatically.
+
+Rules of the road:
+
+- **Append-only still applies.** New colourways go at the END of the
+  category list, never inserted beside their siblings — grouping is by
+  the `group` string, not by position, so previously issued codes are
+  untouched.
+- **Each variant is its own part** with its own code index, price,
+  image, and (optionally) its own compatibility rules — two colourways
+  may allow different bracelets simply by listing different ids.
+- **Codes distinguish colours**, so a commission tells you exactly
+  which colourway to build.
+- **Incompatible colours grey per-dot**, not per-card: if only the
+  steel variant conflicts with the current build, only its dot dims
+  (with the reason on hover) while the rose dot stays selectable.
+- Need a quick stand-in image for a new colourway? A luminance remap of
+  the existing colour's PNG works well until the real render exists
+  (the shipped steel Royal Oak was made exactly that way).
 
 ### Compatibility rules (greying out parts)
 

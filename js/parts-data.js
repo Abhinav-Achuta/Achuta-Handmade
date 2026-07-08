@@ -42,7 +42,12 @@
       i.e. 21,600 vph; a 28,800 vph movement would be bps: 8).
    5. COLOUR VARIANTS: parts sharing the same group: "name" render as
       ONE card with a colour dot per variant (dot colour = swatch:).
-      Each variant is still its own part with its own code index.
+      Each variant is still its own part with its own code index,
+      price, image, and rules — APPEND new colourways at the END of
+      the category list (grouping is by the group string, not by
+      position, so old build codes stay valid). Worked example: the
+      two "royal-oak" case entries below; full walkthrough in
+      README.md → "Colour variants — worked example".
    6. handsets set includedSeconds: the image of the seconds hand the
       kit ships with. The "Included with handset" seconds option
       (matchesHandset: true) renders that image and follows the handset
@@ -57,6 +62,15 @@
    stacking system. Any individual part can override its category with
    its own `layer: <number>` field (e.g. a domed-crystal part at 90).
    `window` and `gmt` are the movement's aperture/hand overlays. */
+/* ═══ PRICING ═══
+   price: on any part = estimated cost shown on its card and summed
+   into the running total. price: 0 shows as "Included"; omit price
+   to show nothing. ALL SEEDED PRICES ARE PLACEHOLDERS — edit freely. */
+var PRICING = {
+  currency: "$",
+  note: "Parts only — assembly quoted with your commission."
+};
+
 var LAYERS = {
   band: 10,        /* straps & bracelets — under everything            */
   movement: 20,    /* visible through skeleton / cutout dials          */
@@ -71,24 +85,24 @@ var LAYERS = {
 var PARTS = {
 
   case: [
-    { id: "case-royal-oak-rose",    name: "Royal Oak · rose gold", vendor: "nomods", url: "",
+    { id: "case-royal-oak-rose", price: 105,    name: "Royal Oak · rose gold", vendor: "nomods", url: "",
       group: "royal-oak", swatch: "#c98a5f",
       tags: ["Royal Oak", "Rose gold"], img: "parts/case-royal-oak-rose.png",
       note: "Octagonal bezel · 37mm lug-to-lug",
       accepts: { mov_brand: "nh" },                /* movements declare specs:{mov_brand} */
       compatible: { band: ["band-bracelet-rose"] } },  /* ONLY the Royal Oak bracelet */
-    { id: "case-oct-steel",   name: "Octagon · steel", vendor: "ACHUTA stock", url: "",
+    { id: "case-oct-steel", price: 68,   name: "Octagon · steel", vendor: "ACHUTA stock", url: "",
       tags: ["Octagon", "Steel"], img: "parts/case-oct-steel.png",
       note: "Octagonal bezel · 8 screws" },
-    { id: "case-diver-steel", name: "Diver · steel", vendor: "ACHUTA stock", url: "",
+    { id: "case-diver-steel", price: 75, name: "Diver · steel", vendor: "ACHUTA stock", url: "",
       tags: ["Round", "Steel"], img: "parts/case-diver-steel.png",
       note: "120-click bezel · fits dials ≤ 28.5 mm",
       accepts: { dial_mm: { max: 28.5 } } },
-    { id: "case-cushion-onyx", name: "Cushion · onyx", vendor: "ACHUTA stock", url: "",
+    { id: "case-cushion-onyx", price: 72, name: "Cushion · onyx", vendor: "ACHUTA stock", url: "",
       tags: ["Cushion", "Onyx"], img: "parts/case-cushion-onyx.png",
       note: "Fits dials ≤ 28.5 mm",
       accepts: { dial_mm: { max: 28.5 } } },
-    { id: "case-royal-oak-steel",   name: "Royal Oak · steel", vendor: "nomods", url: "",
+    { id: "case-royal-oak-steel", price: 95,   name: "Royal Oak · steel", vendor: "nomods", url: "",
       group: "royal-oak", swatch: "#cfd2d6",
       tags: ["Royal Oak", "Steel"], img: "parts/case-royal-oak-steel.png",
       note: "Octagonal bezel · 37mm lug-to-lug",
@@ -97,22 +111,22 @@ var PARTS = {
   ],
 
   movement: [
-    { id: "mov-nh35", name: "Seiko NH35", vendor: "Seiko · TMI", url: "",
+    { id: "mov-nh35", price: 38, name: "Seiko NH35", vendor: "Seiko · TMI", url: "",
       tags: ["Date", "Hacking"], img: "parts/mov-nh35.png",
       windows: ["date"], bps: 6,
       spec: "Automatic · date · 21,600 vph · sweeping seconds", 
       specs: { mov_brand: "nh" } },
-    { id: "mov-nh36", name: "Seiko NH36", vendor: "Seiko · TMI", url: "",
+    { id: "mov-nh36", price: 46, name: "Seiko NH36", vendor: "Seiko · TMI", url: "",
       tags: ["Day-date", "Hacking"], img: "parts/mov-nh36.png",
       windows: ["daydate"], bps: 6,
       spec: "Automatic · day-date · 21,600 vph · sweeping seconds",
       specs: { mov_brand: "nh" } },
-    { id: "mov-nh38", name: "Seiko NH38", vendor: "Seiko · TMI", url: "",
+    { id: "mov-nh38", price: 42, name: "Seiko NH38", vendor: "Seiko · TMI", url: "",
       tags: ["No date", "Hacking"], img: "parts/mov-nh38.png",
       windows: [], bps: 6,
       spec: "Automatic · no date · clean dial · sweeping seconds",
       specs: { mov_brand: "nh" } },
-    { id: "mov-nh34", name: "Seiko NH34 GMT", vendor: "Seiko · TMI", url: "",
+    { id: "mov-nh34", price: 115, name: "Seiko NH34 GMT", vendor: "Seiko · TMI", url: "",
       tags: ["GMT", "Date"], img: "parts/mov-nh34.png",
       windows: ["date", "gmt"], bps: 6,
       spec: "Automatic · true GMT · date · sweeping seconds",
@@ -120,55 +134,55 @@ var PARTS = {
   ],
 
   dial: [
-    { id: "dial-salmon", name: "Salmon tapisserie", vendor: "ACHUTA stock", url: "",
+    { id: "dial-salmon", price: 32, name: "Salmon tapisserie", vendor: "ACHUTA stock", url: "",
       tags: ["Warm", "Tapisserie"], img: "parts/dial-salmon.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
-    { id: "dial-blue",   name: "Midnight tapisserie", vendor: "ACHUTA stock", url: "",
+    { id: "dial-blue", price: 32,   name: "Midnight tapisserie", vendor: "ACHUTA stock", url: "",
       tags: ["Cool", "Tapisserie"], img: "parts/dial-blue.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
-    { id: "dial-forest", name: "Forest tapisserie", vendor: "ACHUTA stock", url: "",
+    { id: "dial-forest", price: 32, name: "Forest tapisserie", vendor: "ACHUTA stock", url: "",
       tags: ["Cool", "Tapisserie"], img: "parts/dial-forest.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
-    { id: "dial-noir",   name: "Noir sunburst", vendor: "ACHUTA stock", url: "",
+    { id: "dial-noir", price: 28,   name: "Noir sunburst", vendor: "ACHUTA stock", url: "",
       tags: ["Dark", "Sunburst"], img: "parts/dial-noir.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
-    { id: "dial-fume",   name: "Charcoal fumé", vendor: "ACHUTA stock", url: "",
+    { id: "dial-fume", price: 34,   name: "Charcoal fumé", vendor: "ACHUTA stock", url: "",
       tags: ["Dark", "Sunburst"], img: "parts/dial-fume.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
-    { id: "dial-ivory",  name: "Ivory matte", vendor: "ACHUTA stock", url: "",
+    { id: "dial-ivory", price: 30,  name: "Ivory matte", vendor: "ACHUTA stock", url: "",
       tags: ["Light", "Matte"], img: "parts/dial-ivory.png", note: "ø 31 mm", specs: { dial_mm: 31 } },
-    { id: "dial-openheart-hammered-green",  name: "Open heart Hammered Pattern - Green", vendor: "dialmaker.shop", url: "",
+    { id: "dial-openheart-hammered-green", price: 58,  name: "Open heart Hammered Pattern - Green", vendor: "dialmaker.shop", url: "",
       tags: ["Open Heart", "Textured"], img: "parts/dial-openheart-hammered-green.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } }
   ],
 
   handset: [
-    { id: "hs-baton-rose",     name: "Baton · rose gold", vendor: "ACHUTA stock", url: "",
+    { id: "hs-baton-rose", price: 18,     name: "Baton · rose gold", vendor: "ACHUTA stock", url: "",
       tags: ["Baton", "Rose gold"], img: "parts/hs-baton-rose.png",
       includedSeconds: "parts/sec-thin-rose.png" },
-    { id: "hs-baton-steel",    name: "Baton · steel", vendor: "ACHUTA stock", url: "",
+    { id: "hs-baton-steel", price: 18,    name: "Baton · steel", vendor: "ACHUTA stock", url: "",
       tags: ["Baton", "Steel"], img: "parts/hs-baton-steel.png",
       includedSeconds: "parts/sec-thin-steel.png" },
-    { id: "hs-sword-gold",     name: "Sword · gold", vendor: "ACHUTA stock", url: "",
+    { id: "hs-sword-gold", price: 22,     name: "Sword · gold", vendor: "ACHUTA stock", url: "",
       tags: ["Sword", "Gold"], img: "parts/hs-sword-gold.png",
       includedSeconds: "parts/sec-thin-gold.png" },
-    { id: "hs-dauphine-steel", name: "Dauphine · steel", vendor: "ACHUTA stock", url: "",
+    { id: "hs-dauphine-steel", price: 19, name: "Dauphine · steel", vendor: "ACHUTA stock", url: "",
       tags: ["Dauphine", "Steel"], img: "parts/hs-dauphine-steel.png",
       includedSeconds: "parts/sec-thin-steel.png" },
-    { id: "hs-arrow-onyx",     name: "Arrow · onyx", vendor: "ACHUTA stock", url: "",
+    { id: "hs-arrow-onyx", price: 20,     name: "Arrow · onyx", vendor: "ACHUTA stock", url: "",
       tags: ["Arrow", "Onyx"], img: "parts/hs-arrow-onyx.png",
       includedSeconds: "parts/sec-arrow-onyx.png" },
-    { id: "hs-alpha-rose",     name: "Alpha · rose gold", vendor: "ACHUTA stock", url: "",
+    { id: "hs-alpha-rose", price: 19,     name: "Alpha · rose gold", vendor: "ACHUTA stock", url: "",
       tags: ["Alpha", "Rose gold"], img: "parts/hs-alpha-rose.png",
       includedSeconds: "parts/sec-thin-rose.png" }
   ],
 
   seconds: [
-    { id: "sec-thin-rose",  name: "Thin sweep · rose gold", vendor: "ACHUTA stock", url: "",
+    { id: "sec-thin-rose", price: 9,  name: "Thin sweep · rose gold", vendor: "ACHUTA stock", url: "",
       tags: ["Rose gold", "Thin"], img: "parts/sec-thin-rose.png" },
-    { id: "sec-thin-steel", name: "Thin sweep · steel", vendor: "ACHUTA stock", url: "",
+    { id: "sec-thin-steel", price: 9, name: "Thin sweep · steel", vendor: "ACHUTA stock", url: "",
       tags: ["Steel", "Thin"], img: "parts/sec-thin-steel.png" },
-    { id: "sec-lollipop",   name: "Lollipop sweep · lume", vendor: "ACHUTA stock", url: "",
+    { id: "sec-lollipop", price: 12,   name: "Lollipop sweep · lume", vendor: "ACHUTA stock", url: "",
       tags: ["Lume", "Lollipop"], img: "parts/sec-lollipop.png" },
-    { id: "sec-signal",     name: "Signal sweep · red", vendor: "ACHUTA stock", url: "",
+    { id: "sec-signal", price: 10,     name: "Signal sweep · red", vendor: "ACHUTA stock", url: "",
       tags: ["Red", "Thin"], img: "parts/sec-signal.png" },
-    { id: "sec-arrow-gold", name: "Arrow sweep · gold", vendor: "ACHUTA stock", url: "",
+    { id: "sec-arrow-gold", price: 11, name: "Arrow sweep · gold", vendor: "ACHUTA stock", url: "",
       tags: ["Gold", "Arrow"], img: "parts/sec-arrow-gold.png" },
-    { id: "sec-included", name: "Included with handset", vendor: "No extra part",
+    { id: "sec-included", price: 0, name: "Included with handset", vendor: "No extra part",
       url: "", tags: ["Included"], featured: true, matchesHandset: true,
       note: "The hand your handset ships with",
       img: "parts/sec-thin-rose.png" }
@@ -177,27 +191,27 @@ var PARTS = {
   /* NEW CATEGORIES are APPENDED here, and to CATS + HISTORY in
      js/builder.js (see README: "Adding a whole new category"). */
   datewheel: [
-    { id: "dw-white", name: "Date wheel · white", vendor: "Seiko · TMI", url: "",
+    { id: "dw-white", price: 0, name: "Date wheel · white", vendor: "Seiko · TMI", url: "",
       tags: ["White"], img: "parts/ovl-date.png",
       imgs: { date: "parts/ovl-date.png", daydate: "parts/ovl-daydate.png" } },
-    { id: "dw-black", name: "Date wheel · black", vendor: "Seiko · TMI", url: "",
+    { id: "dw-black", price: 14, name: "Date wheel · black", vendor: "Seiko · TMI", url: "",
       tags: ["Black"], img: "parts/ovl-date-black.png",
       imgs: { date: "parts/ovl-date-black.png", daydate: "parts/ovl-daydate-black.png" } }
   ],
 
   band: [
-    { id: "band-bracelet-rose",  name: "Bracelet · rose gold", vendor: "ACHUTA stock", url: "",
+    { id: "band-bracelet-rose", price: 85,  name: "Bracelet · rose gold", vendor: "ACHUTA stock", url: "",
       tags: ["Bracelet", "Rose gold"], img: "parts/band-bracelet-royaloak-rose.png", 
       specs: {bracelet: "royal-oak"} },
-    { id: "band-bracelet-steel", name: "Bracelet · steel", vendor: "ACHUTA stock", url: "", group: "bracelet-int", swatch: "#cfd2d6",
+    { id: "band-bracelet-steel", price: 55, name: "Bracelet · steel", vendor: "ACHUTA stock", url: "", group: "bracelet-int", swatch: "#cfd2d6",
       tags: ["Bracelet", "Steel"], img: "parts/band-bracelet-steel.png" },
-    { id: "band-bracelet-gold",  name: "Bracelet · yellow gold", vendor: "ACHUTA stock", url: "", group: "bracelet-int", swatch: "#cfa54e",
+    { id: "band-bracelet-gold", price: 60,  name: "Bracelet · yellow gold", vendor: "ACHUTA stock", url: "", group: "bracelet-int", swatch: "#cfa54e",
       tags: ["Bracelet", "Gold"], img: "parts/band-bracelet-gold.png" },
-    { id: "band-rubber-noir",    name: "Rubber · noir", vendor: "ACHUTA stock", url: "",
+    { id: "band-rubber-noir", price: 22,    name: "Rubber · noir", vendor: "ACHUTA stock", url: "",
       tags: ["Rubber", "Noir"], img: "parts/band-rubber-noir.png" },
-    { id: "band-leather-noir",   name: "Leather · noir", vendor: "ACHUTA stock", url: "",
+    { id: "band-leather-noir", price: 26,   name: "Leather · noir", vendor: "ACHUTA stock", url: "",
       tags: ["Leather", "Noir"], img: "parts/band-leather-noir.png" },
-    { id: "band-leather-cognac", name: "Leather · cognac", vendor: "ACHUTA stock", url: "",
+    { id: "band-leather-cognac", price: 26, name: "Leather · cognac", vendor: "ACHUTA stock", url: "",
       tags: ["Leather", "Cognac"], img: "parts/band-leather-cognac.png" }
   ]
 };

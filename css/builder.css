@@ -330,3 +330,25 @@
 .dot.is-off{ opacity:.22; cursor:not-allowed; }
 .dot.is-off:hover{ transform:none; }
 .dot:focus-visible{ outline:1px solid var(--gold); outline-offset:3px; }
+
+/* ═══ pricing ═══ */
+.card{ position:relative; }
+.card-price{
+  position:absolute; top:.95rem; right:.95rem; z-index:2;
+  background:rgba(6,5,4,.78); color:var(--gold);
+  font-size:.55rem; letter-spacing:.12em;
+  padding:.28rem .45rem .22rem;
+  border:1px solid rgba(199,154,110,.25);
+  pointer-events:none;
+}
+.card-price:empty{ display:none; }
+.total-box{
+  margin-top:3rem; padding:1.4rem 0 1.5rem;
+  border-top:1px solid var(--hair); border-bottom:1px solid var(--hair);
+}
+.total{
+  font-family:var(--serif); font-weight:300;
+  font-size:clamp(2rem,3.4vw,2.6rem); line-height:1;
+  margin:.9rem 0 .6rem; color:var(--bone);
+}
+.total-fine{ font-size:.68rem; letter-spacing:.08em; color:var(--bone-4); }

@@ -130,6 +130,7 @@
         el.setAttribute("aria-pressed", String(selectedHere));
         /* variant groups: refresh face + dots */
         if (reg.members.length > 1) {
+          el.querySelector(".card-price").textContent = priceChip(active);
           el.querySelector(".card-name").textContent = active.name;
           el.querySelector(".card-vendor").textContent = active.vendor + (active.note ? " · " + active.note : "");
           if (!el.querySelector(".thumb-dynamic"))
@@ -156,6 +157,16 @@
   function refreshCompat() { updateCards(); }
 
   /* ── preview stack (z-order from LAYERS, per-part override) ── */
+  function fmtPrice(v) { return (typeof PRICING !== "undefined" ? PRICING.currency : "$") + v; }
+  function priceChip(p) {
+    if (p.price == null) return "";
+    return p.price === 0 ? "Included" : fmtPrice(p.price);
+  }
+  function priceOf(catId) {
+    var p = part(catId);
+    if (p.matchesHandset) return 0;                 /* included seconds costs nothing */
+    return p.price || 0;
+  }
   function secondsImg() {
     var sp = part("seconds");
     if (sp.matchesHandset) return part("handset").includedSeconds || PARTS.seconds[0].img;
@@ -266,6 +277,13 @@
       if (cur) cur.textContent = part(cat.id).name;
     });
 
+    var total = 0;
+    CATS.forEach(function (c) { total += priceOf(c.id); });
+    var totalEl = document.getElementById("est-total");
+    if (totalEl) totalEl.textContent = fmtPrice(total);
+    var noteEl = document.getElementById("est-note");
+    if (noteEl && typeof PRICING !== "undefined") noteEl.textContent = PRICING.note;
+
     var code = encode(state);
     document.getElementById("build-code").textContent = code;
 
@@ -278,7 +296,8 @@
       return c.name + ": " + p.name + " (" + p.vendor + ")";
     });
     var body = "ACHUTA HANDMADE — commission request%0D%0A%0D%0ABuild code: " + code + "%0D%0A%0D%0A" +
-      lines.join("%0D%0A") + "%0D%0A";
+      lines.join("%0D%0A") +
+      "%0D%0A%0D%0AEstimated parts total: " + fmtPrice(total) + " (parts only)%0D%0A";
     document.getElementById("send-commission").setAttribute("href",
       "mailto:commissions@achutahandmade.com?subject=" + encodeURIComponent("Commission — " + code) + "&body=" + body);
 
@@ -370,6 +389,7 @@
           }).join("") + "</span>";
         }
         b.innerHTML =
+          '<span class="card-price">' + priceChip(first) + '</span>' +
           '<span class="card-thumb ' + cat.thumb + (first.matchesHandset ? ' thumb-dynamic' : '') + '" style="background-image:url(\'' + first.img + '\')"></span>' +
           '<span class="card-name">' + first.name + '</span>' +
           '<span class="card-vendor">' + first.vendor + (first.note ? " · " + first.note : "") + '</span>' +
