@@ -186,11 +186,12 @@
 }
 .sec-rot{
   transform-origin:50% 50%;
-  animation:sweep 60s linear infinite;
+  /* mechanical sweep: 21,600 vph = 6 beats/sec = 360 micro-steps per minute */
+  animation:sweep 60s steps(360) infinite;
 }
 @keyframes sweep{
-  from{ transform:rotate(204deg); }
-  to  { transform:rotate(564deg); }
+  from{ transform:rotate(0deg); }
+  to  { transform:rotate(360deg); }
 }
 @media (prefers-reduced-motion:reduce){
   .sec-rot{ animation:none; transform:rotate(204deg); }

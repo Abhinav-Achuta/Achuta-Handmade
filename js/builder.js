@@ -27,14 +27,26 @@
     document.getElementById("ly-hands").src = part("handset").img;
     document.getElementById("ly-sec").src = part("seconds").img;
 
-    var ovls = part("movement").overlays || [];
+    var mov = part("movement");
+    var ovls = mov.overlays || [];
     [0, 1].forEach(function (i) {
       var img = document.getElementById("ly-ovl" + (i + 1));
       if (ovls[i]) { img.src = ovls[i]; img.style.display = ""; }
       else { img.removeAttribute("src"); img.style.display = "none"; }
     });
 
-    document.getElementById("stage-spec").textContent = part("movement").name + " — " + part("movement").spec;
+    /* beat rate follows the movement (NH3x = 6 beats/sec) */
+    var bps = mov.bps || 6;
+    document.getElementById("sec-rot").style.animationTimingFunction = "steps(" + (60 * bps) + ")";
+
+    document.getElementById("stage-spec").textContent = mov.name + " — " + mov.spec;
+  }
+
+  /* start the sweep at the real current second, like a watch on the wrist */
+  function syncSweep() {
+    var now = new Date();
+    var t = now.getSeconds() + now.getMilliseconds() / 1000;
+    document.getElementById("sec-rot").style.animationDelay = (-t).toFixed(3) + "s";
   }
 
   /* ── build code (v2) ─────────────────────────────── */
@@ -218,5 +230,6 @@
 
   buildUI();
   initActions();
+  syncSweep();
   apply();
 })();

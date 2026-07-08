@@ -14,7 +14,10 @@
    2. APPEND an entry to the END of the category list below —
       never reorder or delete entries, or previously issued
       build codes will point at the wrong parts.
-   3. vendor + url are shown on the card and included in the
+   3. movements may set bps (beats per second) — the preview's
+      sweep steps at 60×bps micro-ticks per minute (default 6,
+      i.e. 21,600 vph; a 28,800 vph movement would be bps: 8).
+   4. vendor + url are shown on the card and included in the
       commission email.
    ═══════════════════════════════════════════════════════ */
 
@@ -38,19 +41,19 @@ var PARTS = {
   movement: [
     { id: "mov-nh35", name: "Seiko NH35", vendor: "Seiko · TMI", url: "",
       tags: ["Date", "Hacking"], img: "parts/mov-nh35.png",
-      overlays: ["parts/ovl-date.png"],
+      overlays: ["parts/ovl-date.png"], bps: 6,
       spec: "Automatic · date · 21,600 vph · sweeping seconds" },
     { id: "mov-nh36", name: "Seiko NH36", vendor: "Seiko · TMI", url: "",
       tags: ["Day-date", "Hacking"], img: "parts/mov-nh36.png",
-      overlays: ["parts/ovl-daydate.png"],
+      overlays: ["parts/ovl-daydate.png"], bps: 6,
       spec: "Automatic · day-date · 21,600 vph · sweeping seconds" },
     { id: "mov-nh38", name: "Seiko NH38", vendor: "Seiko · TMI", url: "",
       tags: ["No date", "Hacking"], img: "parts/mov-nh38.png",
-      overlays: [],
+      overlays: [], bps: 6,
       spec: "Automatic · no date · clean dial · sweeping seconds" },
     { id: "mov-nh34", name: "Seiko NH34 GMT", vendor: "Seiko · TMI", url: "",
       tags: ["GMT", "Date"], img: "parts/mov-nh34.png",
-      overlays: ["parts/ovl-date.png", "parts/ovl-gmt.png"],
+      overlays: ["parts/ovl-date.png", "parts/ovl-gmt.png"], bps: 6,
       spec: "Automatic · true GMT · date · sweeping seconds" }
   ],
 

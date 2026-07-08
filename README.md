@@ -9,6 +9,13 @@ cd achuta-handmade-site
 python3 -m http.server 8080
 ```
 
+To retrieve ip on Mac :
+
+```
+ipconfig getifaddr en0
+```
+
+
 Then open **http://localhost:8080** — or use any static server (`npx serve`, nginx, Netlify, Vercel, GitHub Pages…). No build step, no dependencies.
 
 ## What's inside
@@ -33,9 +40,11 @@ dial, handset, sweeping seconds hand — and each choice swaps a transparent
 image layer in the live stacked preview. Filter chips above each category
 narrow parts by tags (Octagon / Round, Warm / Dark, Baton / Sword, …).
 Movements drive compatibility automatically: NH35 adds a date window,
-NH36 a day-date, NH38 removes the window, NH34 adds a GMT hand. The
-seconds hand sweeps continuously in the preview (disabled under
-prefers-reduced-motion).
+NH36 a day-date, NH38 removes the window, NH34 adds a GMT hand. The seconds hand sweeps like the real movement: six 1-degree
+micro-beats per second (21,600 vph), synced to the actual clock so it
+reads the true time — a movement entry can set `bps` to change the beat
+rate (e.g. 8 for a 28,800 vph calibre). Disabled under
+prefers-reduced-motion.
 
 Every configuration produces a **build code** like `AH-445-325Z`:
 
