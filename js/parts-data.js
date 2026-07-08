@@ -72,6 +72,7 @@ var PARTS = {
 
   case: [
     { id: "case-royal-oak-rose",    name: "Royal Oak · rose gold", vendor: "nomods", url: "",
+      group: "royal-oak", swatch: "#c98a5f",
       tags: ["Royal Oak", "Rose gold"], img: "parts/case-royal-oak-rose.png",
       note: "Octagonal bezel · 37mm lug-to-lug",
       accepts: { mov_brand: "nh" },                /* movements declare specs:{mov_brand} */
@@ -86,7 +87,13 @@ var PARTS = {
     { id: "case-cushion-onyx", name: "Cushion · onyx", vendor: "ACHUTA stock", url: "",
       tags: ["Cushion", "Onyx"], img: "parts/case-cushion-onyx.png",
       note: "Fits dials ≤ 28.5 mm",
-      accepts: { dial_mm: { max: 28.5 } } }
+      accepts: { dial_mm: { max: 28.5 } } },
+    { id: "case-royal-oak-steel",   name: "Royal Oak · steel", vendor: "nomods", url: "",
+      group: "royal-oak", swatch: "#cfd2d6",
+      tags: ["Royal Oak", "Steel"], img: "parts/case-royal-oak-steel.png",
+      note: "Octagonal bezel · 37mm lug-to-lug",
+      accepts: { mov_brand: "nh" },
+      compatible: { band: ["band-bracelet-rose"] } }
   ],
 
   movement: [
