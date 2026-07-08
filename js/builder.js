@@ -20,6 +20,75 @@
 
   function part(cat) { return PARTS[cat][state[cat]]; }
 
+  /* ── compatibility engine ────────────────────────────
+     Rules live entirely in parts-data.js:
+     specs / accepts {min,max,equals,oneOf} / compatible / incompatible */
+  function ruleText(owner, key, cons, val) {
+    var unit = /_mm$/.test(key) ? " mm" : "";
+    var label = key.replace(/_mm$/, "").replace(/_/g, " ");
+    if (cons.max != null && val > cons.max) return owner.name + " fits " + label + "s ≤ " + cons.max + unit + " — this is " + val + unit;
+    if (cons.min != null && val < cons.min) return owner.name + " needs " + label + " ≥ " + cons.min + unit + " — this is " + val + unit;
+    if (cons.equals != null && val !== cons.equals) return owner.name + " needs " + label + " = " + cons.equals + unit;
+    if (cons.oneOf && cons.oneOf.indexOf(val) < 0) return owner.name + " needs " + label + ": " + cons.oneOf.join(" / ");
+    return null;
+  }
+  function oneWay(S, P, pCat) {
+    if (S.accepts && P.specs) {
+      for (var key in S.accepts) {
+        if (P.specs[key] == null) continue;            /* undeclared spec → unconstrained */
+        var r = ruleText(S, key, S.accepts[key], P.specs[key]);
+        if (r) return r;
+      }
+    }
+    if (S.compatible && S.compatible[pCat] && S.compatible[pCat].indexOf(P.id) < 0)
+      return "Not offered with " + S.name;
+    if (S.incompatible && S.incompatible[pCat] && S.incompatible[pCat].indexOf(P.id) >= 0)
+      return "Not compatible with " + S.name;
+    return null;
+  }
+  function compatReason(pCat, P, sCat, S) {
+    return oneWay(S, P, pCat) || oneWay(P, S, sCat);
+  }
+  /* reason P can't join the current selection (null = compatible) */
+  function conflictWithSelection(pCat, P) {
+    for (var c = 0; c < CATS.length; c++) {
+      var sCat = CATS[c].id;
+      if (sCat === pCat) continue;
+      var r = compatReason(pCat, P, sCat, part(sCat));
+      if (r) return r;
+    }
+    return null;
+  }
+  /* conflicts inside the current selection itself (used after code loads) */
+  function selectionConflicts() {
+    var out = [];
+    for (var a = 0; a < CATS.length; a++)
+      for (var b = a + 1; b < CATS.length; b++) {
+        var r = compatReason(CATS[a].id, part(CATS[a].id), CATS[b].id, part(CATS[b].id));
+        if (r) out.push(r);
+      }
+    return out;
+  }
+  function refreshCompat() {
+    CATS.forEach(function (cat) {
+      var cards = document.querySelectorAll('.card[data-cat="' + cat.id + '"]');
+      for (var i = 0; i < cards.length; i++) {
+        var why = cards[i].querySelector(".card-why");
+        if (i === state[cat.id]) {                      /* the selected part is never greyed */
+          cards[i].classList.remove("is-off");
+          cards[i].removeAttribute("aria-disabled");
+          why.textContent = "";
+          continue;
+        }
+        var reason = conflictWithSelection(cat.id, PARTS[cat.id][i]);
+        cards[i].classList.toggle("is-off", !!reason);
+        if (reason) { cards[i].setAttribute("aria-disabled", "true"); cards[i].setAttribute("title", reason); }
+        else { cards[i].removeAttribute("aria-disabled"); cards[i].removeAttribute("title"); }
+        why.textContent = reason || "";
+      }
+    });
+  }
+
   /* ── preview stack ───────────────────────────────── */
   function applyPreview() {
     document.getElementById("ly-case").src = part("case").img;
@@ -91,6 +160,7 @@
   /* ── apply everything ────────────────────────────── */
   function apply() {
     applyPreview();
+    refreshCompat();
 
     CATS.forEach(function (cat) {
       var cur = document.getElementById("cur-" + cat.id);
@@ -164,8 +234,12 @@
         b.innerHTML =
           '<span class="card-thumb ' + cat.thumb + '" style="background-image:url(\'' + p.img + '\')"></span>' +
           '<span class="card-name">' + p.name + '</span>' +
-          '<span class="card-vendor">' + p.vendor + (p.note ? " · " + p.note : "") + '</span>';
-        b.addEventListener("click", function () { state[cat.id] = i; apply(); });
+          '<span class="card-vendor">' + p.vendor + (p.note ? " · " + p.note : "") + '</span>' +
+          '<span class="card-why"></span>';
+        b.addEventListener("click", function () {
+          if (b.classList.contains("is-off")) return;   /* greyed = not selectable */
+          state[cat.id] = i; apply();
+        });
         grid.appendChild(b);
       });
       sec.appendChild(grid);
@@ -211,8 +285,14 @@
       if (r.err) { msg.textContent = r.err; msg.className = "load-msg err"; return false; }
       state = r.state;
       apply();
-      msg.textContent = "Build loaded — every part set exactly as commissioned.";
-      msg.className = "load-msg ok";
+      var conflicts = selectionConflicts();
+      if (conflicts.length) {
+        msg.textContent = "Build loaded as commissioned — heads-up: " + conflicts[0] + ".";
+        msg.className = "load-msg err";
+      } else {
+        msg.textContent = "Build loaded — every part set exactly as commissioned.";
+        msg.className = "load-msg ok";
+      }
       return true;
     }
     document.getElementById("load-code").addEventListener("click", function () {
@@ -232,4 +312,11 @@
   initActions();
   syncSweep();
   apply();
+
+  /* owner hook: tweak PARTS in the console, then ACHUTA.refresh() */
+  window.ACHUTA = {
+    parts: PARTS,
+    refresh: apply,
+    getState: function () { var s = {}; for (var k in state) s[k] = state[k]; return s; }
+  };
 })();

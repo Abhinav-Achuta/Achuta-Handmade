@@ -14,10 +14,26 @@
    2. APPEND an entry to the END of the category list below —
       never reorder or delete entries, or previously issued
       build codes will point at the wrong parts.
-   3. movements may set bps (beats per second) — the preview's
+   3. COMPATIBILITY RULES (all optional, all owner-editable):
+      • specs:   physical attributes of THIS part,
+                 e.g.  specs: { dial_mm: 28.5 }
+      • accepts: constraints THIS part imposes on any other part
+                 that declares the matching spec, e.g. a case that
+                 only takes dials up to 28.5 mm:
+                 accepts: { dial_mm: { max: 28.5 } }
+                 Supported: { min, max, equals, oneOf: [...] }
+      • compatible:   explicit whitelist per category, e.g.
+                      compatible: { handset: ["hs-baton-rose"] }
+                      (parts NOT listed are greyed out)
+      • incompatible: explicit blacklist per category, e.g.
+                      incompatible: { seconds: ["sec-lollipop"] }
+      Parts that don't declare a spec are never constrained by it.
+      Incompatible parts grey out in BOTH directions with the reason
+      shown on the card, so clients can never build an invalid combo.
+   4. movements may set bps (beats per second) — the preview's
       sweep steps at 60×bps micro-ticks per minute (default 6,
       i.e. 21,600 vph; a 28,800 vph movement would be bps: 8).
-   4. vendor + url are shown on the card and included in the
+   5. vendor + url are shown on the card and included in the
       commission email.
    ═══════════════════════════════════════════════════════ */
 
@@ -32,10 +48,12 @@ var PARTS = {
       note: "Integrated bracelet" },
     { id: "case-diver-steel", name: "Diver · steel", vendor: "ACHUTA stock", url: "",
       tags: ["Round", "Steel", "Rubber"], img: "parts/case-diver-steel.png",
-      note: "120-click bezel · rubber strap" },
+      note: "120-click bezel · rubber strap · fits dials ≤ 28.5 mm",
+      accepts: { dial_mm: { max: 28.5 } } },
     { id: "case-cushion-onyx", name: "Cushion · onyx", vendor: "ACHUTA stock", url: "",
       tags: ["Cushion", "Onyx", "Leather"], img: "parts/case-cushion-onyx.png",
-      note: "Leather noir strap" }
+      note: "Leather noir strap · fits dials ≤ 28.5 mm",
+      accepts: { dial_mm: { max: 28.5 } } }
   ],
 
   movement: [
@@ -59,17 +77,17 @@ var PARTS = {
 
   dial: [
     { id: "dial-salmon", name: "Salmon tapisserie", vendor: "ACHUTA stock", url: "",
-      tags: ["Warm", "Tapisserie"], img: "parts/dial-salmon.png" },
+      tags: ["Warm", "Tapisserie"], img: "parts/dial-salmon.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
     { id: "dial-blue",   name: "Midnight tapisserie", vendor: "ACHUTA stock", url: "",
-      tags: ["Cool", "Tapisserie"], img: "parts/dial-blue.png" },
+      tags: ["Cool", "Tapisserie"], img: "parts/dial-blue.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
     { id: "dial-forest", name: "Forest tapisserie", vendor: "ACHUTA stock", url: "",
-      tags: ["Cool", "Tapisserie"], img: "parts/dial-forest.png" },
+      tags: ["Cool", "Tapisserie"], img: "parts/dial-forest.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
     { id: "dial-noir",   name: "Noir sunburst", vendor: "ACHUTA stock", url: "",
-      tags: ["Dark", "Sunburst"], img: "parts/dial-noir.png" },
+      tags: ["Dark", "Sunburst"], img: "parts/dial-noir.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
     { id: "dial-fume",   name: "Charcoal fumé", vendor: "ACHUTA stock", url: "",
-      tags: ["Dark", "Sunburst"], img: "parts/dial-fume.png" },
+      tags: ["Dark", "Sunburst"], img: "parts/dial-fume.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
     { id: "dial-ivory",  name: "Ivory matte", vendor: "ACHUTA stock", url: "",
-      tags: ["Light", "Matte"], img: "parts/dial-ivory.png" }
+      tags: ["Light", "Matte"], img: "parts/dial-ivory.png", note: "ø 31 mm", specs: { dial_mm: 31 } }
   ],
 
   handset: [

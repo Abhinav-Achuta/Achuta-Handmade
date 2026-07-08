@@ -261,3 +261,16 @@
   .stack{ width:min(72vw, 330px); }
   .grid{ grid-template-columns:repeat(auto-fill, minmax(112px, 1fr)); }
 }
+
+/* ═══ incompatible (greyed) parts ═══ */
+.card.is-off{
+  opacity:.34;
+  filter:grayscale(.75);
+  cursor:not-allowed;
+}
+.card.is-off:hover{ transform:none; border-color:rgba(234,227,214,.09); }
+.card-why{
+  font-size:.56rem; letter-spacing:.06em; line-height:1.5;
+  color:#c96a5a; min-height:0;
+}
+.card-why:empty{ display:none; }

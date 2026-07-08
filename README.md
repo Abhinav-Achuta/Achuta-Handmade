@@ -9,13 +9,6 @@ cd achuta-handmade-site
 python3 -m http.server 8080
 ```
 
-To retrieve ip on Mac :
-
-```
-ipconfig getifaddr en0
-```
-
-
 Then open **http://localhost:8080** — or use any static server (`npx serve`, nginx, Netlify, Vercel, GitHub Pages…). No build step, no dependencies.
 
 ## What's inside
@@ -56,6 +49,28 @@ Every configuration produces a **build code** like `AH-445-325Z`:
   and every part snaps to exactly what the customer chose. Codes work as
   links too — `builder.html#AH-445-325Z` opens preloaded. Mistyped codes
   are rejected by the checksum instead of loading the wrong build.
+
+### Compatibility rules (greying out parts)
+
+Rules live in `js/parts-data.js` next to the parts themselves — no code
+changes needed. Give parts physical attributes with `specs`
+(e.g. a dial declares `specs: { dial_mm: 31 }`) and let other parts
+constrain them with `accepts` (e.g. a case that only takes 28.5 mm dials
+declares `accepts: { dial_mm: { max: 28.5 } }` — min / max / equals /
+oneOf are supported). For one-off quirks, use explicit lists:
+`compatible: { seconds: ["sec-signal"] }` (whitelist) or
+`incompatible: { handset: ["hs-sword-gold"] }` (blacklist).
+
+Ex) { id: "case-diver-steel", name: "Diver · steel", ...,
+  compatible: { movement: ["mov-nh35", "mov-nh36"] } }
+
+Incompatible parts grey out in BOTH directions with the reason printed
+on the card ("Diver · steel fits dials ≤ 28.5 mm — this is 31 mm"), and
+greyed parts can't be clicked, so clients can never assemble an invalid
+combination. If you tighten rules after issuing codes, old codes still
+load exactly as commissioned but show a heads-up naming the conflict.
+For live experimenting, open the browser console on the builder page:
+edit `ACHUTA.parts`, then call `ACHUTA.refresh()`.
 
 ### Adding real vendor parts (Nomad Watch Works, Namoki, DLW, …)
 
