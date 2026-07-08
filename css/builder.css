@@ -314,3 +314,19 @@
   .cat-body, .caret{ transition-duration:.01s; }
   .cat.is-collapsed .cat-body-inner{ transition-delay:0s; }
 }
+
+/* ═══ colour-variant dots ═══ */
+.card--group{ cursor:pointer; }
+.dots{ display:flex; gap:.45rem; padding-top:.1rem; }
+.dot{
+  appearance:none; border:1px solid rgba(234,227,214,.3); padding:0;
+  width:15px; height:15px; border-radius:50%; cursor:pointer; flex:none;
+  transition:transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s ease;
+}
+.dot:hover{ transform:scale(1.15); }
+.dot[aria-pressed="true"]{
+  box-shadow:0 0 0 2px var(--ink), 0 0 0 3px var(--gold);
+}
+.dot.is-off{ opacity:.22; cursor:not-allowed; }
+.dot.is-off:hover{ transform:none; }
+.dot:focus-visible{ outline:1px solid var(--gold); outline-offset:3px; }

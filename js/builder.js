@@ -34,11 +34,16 @@
     if (cons.oneOf && cons.oneOf.indexOf(val) < 0) return owner.name + " needs " + label + ": " + cons.oneOf.join(" / ");
     return null;
   }
+  function normCons(c) {
+    if (Array.isArray(c)) return { oneOf: c };         /* accepts:{k:["a","b"]}  */
+    if (c !== null && typeof c !== "object") return { equals: c }; /* accepts:{k:"royal-oak"} */
+    return c;
+  }
   function oneWay(S, P, pCat) {
     if (S.accepts && P.specs) {
       for (var key in S.accepts) {
         if (P.specs[key] == null) continue;            /* undeclared spec → unconstrained */
-        var r = ruleText(S, key, S.accepts[key], P.specs[key]);
+        var r = ruleText(S, key, normCons(S.accepts[key]), P.specs[key]);
         if (r) return r;
       }
     }
@@ -71,25 +76,84 @@
       }
     return out;
   }
-  function refreshCompat() {
+  function lintRules() {
+    var declared = {};                                  /* spec key -> {catId:true} */
     CATS.forEach(function (cat) {
-      var cards = document.querySelectorAll('.card[data-cat="' + cat.id + '"]');
-      for (var i = 0; i < cards.length; i++) {
-        var why = cards[i].querySelector(".card-why");
-        if (i === state[cat.id]) {                      /* the selected part is never greyed */
-          cards[i].classList.remove("is-off");
-          cards[i].removeAttribute("aria-disabled");
-          why.textContent = "";
-          continue;
+      PARTS[cat.id].forEach(function (p) {
+        if (p.specs) for (var k in p.specs) (declared[k] = declared[k] || {})[cat.id] = true;
+      });
+    });
+    CATS.forEach(function (cat) {
+      PARTS[cat.id].forEach(function (p) {
+        if (p.accepts) for (var k in p.accepts) {
+          var cons = p.accepts[k];
+          if (cons !== null && typeof cons === "object" && !Array.isArray(cons)) {
+            var known = ["min", "max", "equals", "oneOf"];
+            var bad = Object.keys(cons).filter(function (ck) { return known.indexOf(ck) < 0; });
+            if (bad.length) console.warn('[ACHUTA builder] "' + p.name + '" accepts:{' + k + ':{' + bad.join(",") + ':…}} — unknown comparator(s). Use min / max / equals / oneOf (e.g. { equals: "royal-oak" } or the shorthand "royal-oak"). This rule is being IGNORED.');
+          }
+          if (PARTS[k]) console.warn('[ACHUTA builder] "' + p.name + '" has accepts:{' + k + ':…} but "' + k + '" is a CATEGORY name. accepts matches SPEC names — for "only these parts" use compatible:{' + k + ':["part-id"]} instead.');
+          else if (!declared[k]) console.warn('[ACHUTA builder] "' + p.name + '" accepts "' + k + '" but no part anywhere declares specs:{' + k + ':…} — nothing will grey out. Add that spec to the target parts, or use compatible:/incompatible: lists.');
+          else CATS.forEach(function (c2) {
+            if (!declared[k][c2.id]) return;
+            var missing = PARTS[c2.id].filter(function (q) { return !q.specs || q.specs[k] == null; }).map(function (q) { return q.name; });
+            if (missing.length) console.info('[ACHUTA builder] heads-up: these ' + c2.name.toLowerCase() + ' parts have no specs:{' + k + '} so "' + p.name + '" will never grey them: ' + missing.join(", ") + '. Add the spec, or switch to compatible:{' + c2.id + ':[…]}.');
+          });
         }
-        var reason = conflictWithSelection(cat.id, PARTS[cat.id][i]);
-        cards[i].classList.toggle("is-off", !!reason);
-        if (reason) { cards[i].setAttribute("aria-disabled", "true"); cards[i].setAttribute("title", reason); }
-        else { cards[i].removeAttribute("aria-disabled"); cards[i].removeAttribute("title"); }
-        why.textContent = reason || "";
-      }
+        ["compatible", "incompatible"].forEach(function (kind) {
+          if (p[kind]) for (var c in p[kind]) {
+            if (!PARTS[c]) { console.warn('[ACHUTA builder] "' + p.name + '" ' + kind + ':{' + c + '} — no such category. Categories: ' + CATS.map(function (x) { return x.id; }).join(", ")); return; }
+            (p[kind][c] || []).forEach(function (id) {
+              if (!PARTS[c].some(function (q) { return q.id === id; }))
+                console.warn('[ACHUTA builder] "' + p.name + '" ' + kind + ':{' + c + '} lists unknown part id "' + id + '". Known ids: ' + PARTS[c].map(function (q) { return q.id; }).join(", "));
+            });
+          }
+        });
+      });
     });
   }
+
+  /* card registry: one entry per rendered card; groups list several part indices */
+  var CARDREG = {};
+  function updateCards() {
+    CATS.forEach(function (cat) {
+      var parts = PARTS[cat.id], sel = state[cat.id];
+      var reasons = parts.map(function (p, i) {
+        return i === sel ? null : conflictWithSelection(cat.id, p);   /* selected never greys */
+      });
+      (CARDREG[cat.id] || []).forEach(function (reg) {
+        var el = reg.el;
+        var selectedHere = reg.members.indexOf(sel) >= 0;
+        var activeIdx = selectedHere ? sel : reg.members[0];
+        var active = parts[activeIdx];
+        el.setAttribute("data-i", activeIdx);
+        el.setAttribute("aria-pressed", String(selectedHere));
+        /* variant groups: refresh face + dots */
+        if (reg.members.length > 1) {
+          el.querySelector(".card-name").textContent = active.name;
+          el.querySelector(".card-vendor").textContent = active.vendor + (active.note ? " · " + active.note : "");
+          if (!el.querySelector(".thumb-dynamic"))
+            el.querySelector(".card-thumb").style.backgroundImage = "url('" + active.img + "')";
+          reg.dots.forEach(function (dot) {
+            var di = +dot.getAttribute("data-i");
+            dot.setAttribute("aria-pressed", String(di === sel));
+            var r = reasons[di];
+            dot.classList.toggle("is-off", !!r);
+            if (r) dot.setAttribute("title", r); else dot.removeAttribute("title");
+          });
+        }
+        /* grey the card when every part it represents conflicts */
+        var allOff = reg.members.every(function (i) { return !!reasons[i]; });
+        var why = reasons[activeIdx] && reg.members.every(function (i) { return !!reasons[i]; })
+          ? reasons[activeIdx] : (allOff ? reasons[reg.members[0]] : null);
+        el.classList.toggle("is-off", allOff);
+        if (allOff) { el.setAttribute("aria-disabled", "true"); el.setAttribute("title", why || ""); }
+        else { el.removeAttribute("aria-disabled"); el.removeAttribute("title"); }
+        el.querySelector(".card-why").textContent = allOff ? (why || "") : (reg.members.length === 1 && reasons[reg.members[0]] ? reasons[reg.members[0]] : "");
+      });
+    });
+  }
+  function refreshCompat() { updateCards(); }
 
   /* ── preview stack (z-order from LAYERS, per-part override) ── */
   function secondsImg() {
@@ -200,9 +264,6 @@
     CATS.forEach(function (cat) {
       var cur = document.getElementById("cur-" + cat.id);
       if (cur) cur.textContent = part(cat.id).name;
-      var cards = document.querySelectorAll('[data-cat="' + cat.id + '"][data-i]');
-      for (var i = 0; i < cards.length; i++)
-        cards[i].setAttribute("aria-pressed", String(+cards[i].getAttribute("data-i") === state[cat.id]));
     });
 
     var code = encode(state);
@@ -276,23 +337,63 @@
       grid.className = "grid";
       var ordered = parts.map(function (p, i) { return { p: p, i: i }; });
       ordered.sort(function (a, b) { return ((b.p.featured ? 1 : 0) - (a.p.featured ? 1 : 0)) || (a.i - b.i); });
+      CARDREG[cat.id] = [];
+
+      /* colour-variant groups: parts sharing p.group render as ONE card with dots */
+      var seenGroup = {};
+      var units = [];
       ordered.forEach(function (o) {
-        var p = o.p, i = o.i;
-        var b = document.createElement("button");
-        b.type = "button"; b.className = "card";
+        if (o.p.group) {
+          if (seenGroup[o.p.group]) { seenGroup[o.p.group].members.push(o.i); return; }
+          var u = { members: [o.i], group: o.p.group };
+          seenGroup[o.p.group] = u; units.push(u);
+        } else units.push({ members: [o.i] });
+      });
+
+      units.forEach(function (u) {
+        var first = parts[u.members[0]];
+        var tags = [];
+        u.members.forEach(function (i) { (parts[i].tags || []).forEach(function (t) { if (tags.indexOf(t) < 0) tags.push(t); }); });
+
+        var b = document.createElement(u.members.length > 1 ? "div" : "button");
+        if (u.members.length === 1) b.type = "button"; else { b.setAttribute("role", "button"); b.tabIndex = 0; }
+        b.className = "card" + (u.members.length > 1 ? " card--group" : "");
         b.setAttribute("data-cat", cat.id);
-        b.setAttribute("data-i", i);
-        b.setAttribute("data-tags", (p.tags || []).join("|"));
+        b.setAttribute("data-i", u.members[0]);
+        b.setAttribute("data-tags", tags.join("|"));
         b.setAttribute("aria-pressed", "false");
+        var dotsHtml = "";
+        if (u.members.length > 1) {
+          dotsHtml = '<span class="dots" aria-label="Colour options">' + u.members.map(function (i) {
+            return '<button type="button" class="dot" data-i="' + i + '" aria-pressed="false" aria-label="' +
+              parts[i].name + '" style="background:' + (parts[i].swatch || parts[i].css || "#888") + '"></button>';
+          }).join("") + "</span>";
+        }
         b.innerHTML =
-          '<span class="card-thumb ' + cat.thumb + (p.matchesHandset ? ' thumb-dynamic' : '') + '" style="background-image:url(\'' + p.img + '\')"></span>' +
-          '<span class="card-name">' + p.name + '</span>' +
-          '<span class="card-vendor">' + p.vendor + (p.note ? " · " + p.note : "") + '</span>' +
+          '<span class="card-thumb ' + cat.thumb + (first.matchesHandset ? ' thumb-dynamic' : '') + '" style="background-image:url(\'' + first.img + '\')"></span>' +
+          '<span class="card-name">' + first.name + '</span>' +
+          '<span class="card-vendor">' + first.vendor + (first.note ? " · " + first.note : "") + '</span>' +
+          dotsHtml +
           '<span class="card-why"></span>';
-        b.addEventListener("click", function () {
-          if (b.classList.contains("is-off")) return;   /* greyed = not selectable */
+
+        function choose(i) {
+          if (b.classList.contains("is-off")) return;
           state[cat.id] = i; apply();
+        }
+        b.addEventListener("click", function (e) {
+          var dot = e.target.closest ? e.target.closest(".dot") : null;
+          if (dot) {
+            if (dot.classList.contains("is-off")) return;
+            choose(+dot.getAttribute("data-i"));
+            return;
+          }
+          choose(+b.getAttribute("data-i"));            /* card body = active variant */
         });
+        if (u.members.length > 1) b.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); choose(+b.getAttribute("data-i")); }
+        });
+
+        CARDREG[cat.id].push({ el: b, members: u.members, dots: [].slice.call(b.querySelectorAll(".dot")) });
         grid.appendChild(b);
       });
       inner.appendChild(grid);
@@ -365,6 +466,7 @@
   initActions();
   syncSweep();
   apply();
+  lintRules();
 
   /* owner hook: tweak PARTS in the console, then ACHUTA.refresh() */
   window.ACHUTA = {

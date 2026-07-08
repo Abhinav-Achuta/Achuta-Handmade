@@ -303,3 +303,9 @@ em{ font-style:italic; }
   .scroll-cue i{ animation:none; }
   .dust{ display:none; }
 }
+
+/* ─────────── header nav (tabs) — sized +5% ─────────── */
+.head-nav{ display:flex; align-items:center; gap:clamp(1.2rem, 3vw, 2.2rem); }
+.site-head{ padding:1.575rem clamp(1.47rem, 4.2vw, 3.36rem); }
+.head-mark{ font-size:.756rem; }
+.head-link{ font-size:.651rem; }

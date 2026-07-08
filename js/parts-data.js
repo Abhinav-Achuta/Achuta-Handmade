@@ -29,18 +29,26 @@
                       (parts NOT listed are greyed out)
       • incompatible: explicit blacklist per category, e.g.
                       incompatible: { seconds: ["sec-lollipop"] }
-      Parts that don't declare a spec are never constrained by it.
+      Parts that don't declare a spec are never constrained by it —
+      so "this case ONLY accepts bracelet X" is best written as a
+      whitelist on the case: compatible: { band: ["band-x-id"] }.
+      (accepts also allows shorthand: { k: "value" } means equals,
+      { k: ["a","b"] } means oneOf. Misconfigured rules print
+      warnings in the browser console.)
       Incompatible parts grey out in BOTH directions with the reason
       shown on the card, so clients can never build an invalid combo.
    4. movements may set bps (beats per second) — the preview's
       sweep steps at 60×bps micro-ticks per minute (default 6,
       i.e. 21,600 vph; a 28,800 vph movement would be bps: 8).
-   5. handsets set includedSeconds: the image of the seconds hand the
+   5. COLOUR VARIANTS: parts sharing the same group: "name" render as
+      ONE card with a colour dot per variant (dot colour = swatch:).
+      Each variant is still its own part with its own code index.
+   6. handsets set includedSeconds: the image of the seconds hand the
       kit ships with. The "Included with handset" seconds option
       (matchesHandset: true) renders that image and follows the handset
       live; featured: true floats a part to the front of its grid
       WITHOUT changing its code index.
-   6. vendor + url are shown on the card and included in the
+   7. vendor + url are shown on the card and included in the
       commission email.
    ═══════════════════════════════════════════════════════ */
 
@@ -66,7 +74,8 @@ var PARTS = {
     { id: "case-royal-oak-rose",    name: "Royal Oak · rose gold", vendor: "nomods", url: "",
       tags: ["Royal Oak", "Rose gold"], img: "parts/case-royal-oak-rose.png",
       note: "Octagonal bezel · 37mm lug-to-lug",
-      accepts: { mov_brand: {text: "nh"}, bracelet: {text: "royal-oak"} } },
+      accepts: { mov_brand: "nh" },                /* movements declare specs:{mov_brand} */
+      compatible: { band: ["band-bracelet-rose"] } },  /* ONLY the Royal Oak bracelet */
     { id: "case-oct-steel",   name: "Octagon · steel", vendor: "ACHUTA stock", url: "",
       tags: ["Octagon", "Steel"], img: "parts/case-oct-steel.png",
       note: "Octagonal bezel · 8 screws" },
@@ -173,9 +182,9 @@ var PARTS = {
     { id: "band-bracelet-rose",  name: "Bracelet · rose gold", vendor: "ACHUTA stock", url: "",
       tags: ["Bracelet", "Rose gold"], img: "parts/band-bracelet-royaloak-rose.png", 
       specs: {bracelet: "royal-oak"} },
-    { id: "band-bracelet-steel", name: "Bracelet · steel", vendor: "ACHUTA stock", url: "",
+    { id: "band-bracelet-steel", name: "Bracelet · steel", vendor: "ACHUTA stock", url: "", group: "bracelet-int", swatch: "#cfd2d6",
       tags: ["Bracelet", "Steel"], img: "parts/band-bracelet-steel.png" },
-    { id: "band-bracelet-gold",  name: "Bracelet · yellow gold", vendor: "ACHUTA stock", url: "",
+    { id: "band-bracelet-gold",  name: "Bracelet · yellow gold", vendor: "ACHUTA stock", url: "", group: "bracelet-int", swatch: "#cfa54e",
       tags: ["Bracelet", "Gold"], img: "parts/band-bracelet-gold.png" },
     { id: "band-rubber-noir",    name: "Rubber · noir", vendor: "ACHUTA stock", url: "",
       tags: ["Rubber", "Noir"], img: "parts/band-rubber-noir.png" },

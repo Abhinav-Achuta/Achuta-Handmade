@@ -110,6 +110,16 @@ the shipped files is the worked example to copy):
 Rule of thumb: everything is append-only — parts within a category,
 categories within HISTORY — and codes survive any addition.
 
+### Colour variants (one card, colour dots)
+
+Parts that come in several colours can share a `group: "name"` field
+plus a `swatch: "#hex"` each — they render as ONE card with a colour
+dot per variant; pressing a dot switches colour (image, name, and code
+all follow). Each variant is still its own part with its own code
+index, so append variants like any other part and old codes stay
+valid. Incompatible variants grey out per-dot. The octagon case and
+integrated bracelet in the shipped catalogue are the worked examples.
+
 ### Compatibility rules (greying out parts)
 
 Rules live in `js/parts-data.js` next to the parts themselves — no code
@@ -117,7 +127,16 @@ changes needed. Give parts physical attributes with `specs`
 (e.g. a dial declares `specs: { dial_mm: 31 }`) and let other parts
 constrain them with `accepts` (e.g. a case that only takes 28.5 mm dials
 declares `accepts: { dial_mm: { max: 28.5 } }` — min / max / equals /
-oneOf are supported). For one-off quirks, use explicit lists:
+oneOf are supported). Shorthand also works: `accepts: { band_style: "royal-oak" }` means
+equals, and an array means oneOf. IMPORTANT: `accepts` only constrains
+parts that DECLARE the matching spec — a bracelet without
+`specs: { band_style: … }` is deliberately never greyed. So for
+"this case only takes bracelet X", prefer the whitelist on the case:
+`compatible: { band: ["band-x-id"] }`. Misconfigured rules (unknown
+categories, unknown part ids, accepts keys nothing declares) print
+warnings in the browser console when the builder loads.
+
+For one-off quirks, use explicit lists:
 `compatible: { seconds: ["sec-signal"] }` (whitelist) or
 `incompatible: { handset: ["hs-sword-gold"] }` (blacklist).
 
