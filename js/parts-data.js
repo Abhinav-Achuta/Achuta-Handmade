@@ -59,19 +59,19 @@ var PARTS = {
   movement: [
     { id: "mov-nh35", name: "Seiko NH35", vendor: "Seiko · TMI", url: "",
       tags: ["Date", "Hacking"], img: "parts/mov-nh35.png",
-      overlays: ["parts/ovl-date.png"], bps: 6,
+      windows: ["date"], bps: 6,
       spec: "Automatic · date · 21,600 vph · sweeping seconds" },
     { id: "mov-nh36", name: "Seiko NH36", vendor: "Seiko · TMI", url: "",
       tags: ["Day-date", "Hacking"], img: "parts/mov-nh36.png",
-      overlays: ["parts/ovl-daydate.png"], bps: 6,
+      windows: ["daydate"], bps: 6,
       spec: "Automatic · day-date · 21,600 vph · sweeping seconds" },
     { id: "mov-nh38", name: "Seiko NH38", vendor: "Seiko · TMI", url: "",
       tags: ["No date", "Hacking"], img: "parts/mov-nh38.png",
-      overlays: [], bps: 6,
+      windows: [], bps: 6,
       spec: "Automatic · no date · clean dial · sweeping seconds" },
     { id: "mov-nh34", name: "Seiko NH34 GMT", vendor: "Seiko · TMI", url: "",
       tags: ["GMT", "Date"], img: "parts/mov-nh34.png",
-      overlays: ["parts/ovl-date.png", "parts/ovl-gmt.png"], bps: 6,
+      windows: ["date", "gmt"], bps: 6,
       spec: "Automatic · true GMT · date · sweeping seconds" }
   ],
 
@@ -116,5 +116,16 @@ var PARTS = {
       tags: ["Red", "Thin"], img: "parts/sec-signal.png" },
     { id: "sec-arrow-gold", name: "Arrow sweep · gold", vendor: "ACHUTA stock", url: "",
       tags: ["Gold", "Arrow"], img: "parts/sec-arrow-gold.png" }
+  ],
+
+  /* NEW CATEGORIES are APPENDED here, and to CATS + HISTORY in
+     js/builder.js (see README: "Adding a whole new category"). */
+  datewheel: [
+    { id: "dw-white", name: "Date wheel · white", vendor: "Seiko · TMI", url: "",
+      tags: ["White"], img: "parts/ovl-date.png",
+      imgs: { date: "parts/ovl-date.png", daydate: "parts/ovl-daydate.png" } },
+    { id: "dw-black", name: "Date wheel · black", vendor: "Seiko · TMI", url: "",
+      tags: ["Black"], img: "parts/ovl-date-black.png",
+      imgs: { date: "parts/ovl-date-black.png", daydate: "parts/ovl-daydate-black.png" } }
   ]
 };

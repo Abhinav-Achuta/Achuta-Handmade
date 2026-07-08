@@ -274,3 +274,6 @@
   color:#c96a5a; min-height:0;
 }
 .card-why:empty{ display:none; }
+
+/* date-wheel thumbnails zoom onto the 3 o'clock window */
+.t-dw{ background-size:620%; background-position:63.5% 50%; }

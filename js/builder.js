@@ -11,12 +11,13 @@
     { id: "movement", name: "Movement",     thumb: "t-mov" },
     { id: "dial",     name: "Dial",         thumb: "t-dial" },
     { id: "handset",  name: "Handset",      thumb: "t-hands" },
-    { id: "seconds",  name: "Seconds hand", thumb: "t-sec" }
+    { id: "seconds",  name: "Seconds hand", thumb: "t-sec" },
+    { id: "datewheel", name: "Date wheel",  thumb: "t-dw" }
   ];
 
   /* default = the watch from the films */
-  var state = { case: 0, movement: 0, dial: 0, handset: 0, seconds: 0 };
-  var filters = { case: null, movement: null, dial: null, handset: null, seconds: null };
+  var state = { case: 0, movement: 0, dial: 0, handset: 0, seconds: 0, datewheel: 0 };
+  var filters = { case: null, movement: null, dial: null, handset: null, seconds: null, datewheel: null };
 
   function part(cat) { return PARTS[cat][state[cat]]; }
 
@@ -97,7 +98,11 @@
     document.getElementById("ly-sec").src = part("seconds").img;
 
     var mov = part("movement");
-    var ovls = mov.overlays || [];
+    var dw = part("datewheel");
+    var ovls = (mov.windows || []).map(function (w) {
+      if (w === "gmt") return "parts/ovl-gmt.png";
+      return (dw.imgs && dw.imgs[w]) || "";
+    }).filter(Boolean);
     [0, 1].forEach(function (i) {
       var img = document.getElementById("ly-ovl" + (i + 1));
       if (ovls[i]) { img.src = ovls[i]; img.style.display = ""; }
@@ -120,9 +125,16 @@
 
   /* ── build code (v2) ─────────────────────────────── */
   var ALPHA = "23456789ABCDEFGHJKMNPQRSTVWXYZ"; // 30 unambiguous chars
-  var VERSION = 2;
+  /* every code version and its category order — APPEND-ONLY.
+     When you add a category: copy the last line, add the new id at the
+     end, bump VERSION. Older codes keep loading (new picks default 0). */
+  var HISTORY = {
+    2: ["case", "movement", "dial", "handset", "seconds"],
+    3: ["case", "movement", "dial", "handset", "seconds", "datewheel"]
+  };
+  var VERSION = 3;
 
-  function digits(s) { return [VERSION].concat(CATS.map(function (c) { return s[c.id]; })); }
+  function digits(s) { return [VERSION].concat(HISTORY[VERSION].map(function (id) { return s[id]; })); }
   function checksum(ds) {
     var sum = 0;
     for (var i = 0; i < ds.length; i++) sum += ds[i] * (i + 3);
@@ -131,28 +143,34 @@
   function encode(s) {
     var ds = digits(s);
     var chars = ds.map(function (d) { return ALPHA[d]; }).join("") + ALPHA[checksum(ds)];
-    return "AH-" + chars.slice(0, 3) + "-" + chars.slice(3);
+    var mid = Math.floor(chars.length / 2);
+    return "AH-" + chars.slice(0, mid) + "-" + chars.slice(mid);
   }
   function decode(str) {
     if (!str) return { err: "Enter a code." };
     var raw = String(str).toUpperCase().replace(/[^A-Z0-9]/g, "");
     if (raw.slice(0, 2) === "AH") raw = raw.slice(2);
-    if (raw.length === 10) return { err: "That looks like a code from the previous builder — ask us and we’ll translate it." };
-    if (raw.length !== 7) return { err: "A build code has 7 characters after AH." };
+    if (raw.length < 4) return { err: "That code is too short." };
+    var ver = ALPHA.indexOf(raw[0]);
+    if (ver === 1) return { err: "That looks like a code from the previous builder — ask us and we’ll translate it." };
+    var order = HISTORY[ver];
+    if (!order) return { err: "This code is from a different builder version." };
+    var need = order.length + 2;                     /* version + picks + checksum */
+    if (raw.length !== need) return { err: "A v" + ver + " build code has " + need + " characters after AH." };
     var ds = [];
-    for (var i = 0; i < 7; i++) {
+    for (var i = 0; i < need; i++) {
       var v = ALPHA.indexOf(raw[i]);
       if (v < 0) return { err: "Unrecognized character “" + raw[i] + "”." };
       ds.push(v);
     }
-    var payload = ds.slice(0, 6), check = ds[6];
+    var payload = ds.slice(0, need - 1), check = ds[need - 1];
     if (checksum(payload) !== check) return { err: "That code doesn’t check out — one character may be mistyped." };
-    if (payload[0] !== VERSION) return { err: "This code is from a different builder version." };
     var s = {};
-    for (var c = 0; c < CATS.length; c++) {
+    CATS.forEach(function (c) { s[c.id] = 0; });     /* categories newer than the code default to first part */
+    for (var c = 0; c < order.length; c++) {
       var val = payload[c + 1];
-      if (val >= PARTS[CATS[c].id].length) return { err: "That code doesn’t match the current parts list." };
-      s[CATS[c].id] = val;
+      if (!PARTS[order[c]] || val >= PARTS[order[c]].length) return { err: "That code doesn’t match the current parts list." };
+      s[order[c]] = val;
     }
     return { state: s };
   }
