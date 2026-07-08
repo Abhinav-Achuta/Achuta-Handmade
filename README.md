@@ -37,7 +37,11 @@ parts-catalogue configurator: clients click real parts — case, band/bracelet,
 movement, dial, handset, sweeping seconds hand, date wheel — and each choice swaps a transparent
 image layer in the live stacked preview. Filter chips above each category
 narrow parts by tags (Octagon / Round, Warm / Dark, Baton / Sword, …).
-Movements drive compatibility automatically: NH35 adds a date window,
+Handsets ship with a matching seconds hand: the "Included with
+handset" option (the default) renders whichever hand matches the chosen
+handset and follows it live — picking any other seconds hand is the
+upgrade path, declared per handset via `includedSeconds` in
+`parts-data.js`. Movements drive compatibility automatically: NH35 adds a date window,
 NH36 a day-date, NH38 removes the window, NH34 adds a GMT hand — and
 the window renders in the client's chosen date-wheel colour. The seconds hand sweeps like the real movement: six 1-degree
 micro-beats per second (21,600 vph), synced to the actual clock so it

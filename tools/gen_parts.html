@@ -272,6 +272,14 @@
   seconds("sec-lollipop", "lollipop · white", "#d6d9dd", "lollipop");
   seconds("sec-signal", "signal · red", "#b3382e", "thin");
   seconds("sec-arrow-gold", "arrow · gold", "#cfa54e", "arrow");
+  seconds("sec-thin-gold", "thin · gold", "#cfa54e", "thin");
+  (function () { /* onyx arrow with lume tip — matches the arrow handset */
+    var s = newPart("sec-arrow-onyx", "arrow · onyx · lume tip");
+    el("line", { x1: CX, y1: CY + 16, x2: CX, y2: CY - 72, stroke: "#3f3f43", "stroke-width": 1.8, "stroke-linecap": "round" }, s);
+    el("polygon", { points: (CX - 4) + "," + (CY - 56) + " " + CX + "," + (CY - 70) + " " + (CX + 4) + "," + (CY - 56), fill: "#efe9dc", stroke: "#2a2a2d", "stroke-width": .8 }, s);
+    el("circle", { cx: CX, cy: CY + 11, r: 3.4, fill: "#3f3f43" }, s);
+    el("circle", { cx: CX, cy: CY, r: 2.2, fill: "#3f3f43" }, s);
+  })();
 
   /* ── movement overlays: date window / day-date / GMT hand ── */
   (function () {

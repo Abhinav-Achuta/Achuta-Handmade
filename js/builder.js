@@ -17,7 +17,7 @@
   ];
 
   /* default = the watch from the films */
-  var state = { case: 0, band: 0, movement: 0, dial: 0, handset: 0, seconds: 0, datewheel: 0 };
+  var state = { case: 0, band: 0, movement: 0, dial: 0, handset: 0, seconds: 5, datewheel: 0 };
   var filters = { case: null, band: null, movement: null, dial: null, handset: null, seconds: null, datewheel: null };
 
   function part(cat) { return PARTS[cat][state[cat]]; }
@@ -92,6 +92,11 @@
   }
 
   /* ── preview stack (z-order from LAYERS, per-part override) ── */
+  function secondsImg() {
+    var sp = part("seconds");
+    if (sp.matchesHandset) return part("handset").includedSeconds || PARTS.seconds[0].img;
+    return sp.img;
+  }
   function z(catKey, p) { return (p && p.layer != null) ? p.layer : LAYERS[catKey]; }
   function setLayer(id, catKey) {
     var p = part(catKey), img = document.getElementById(id);
@@ -104,7 +109,7 @@
     setLayer("ly-mov", "movement");
     setLayer("ly-dial", "dial");
     setLayer("ly-hands", "handset");
-    document.getElementById("ly-sec").src = part("seconds").img;
+    document.getElementById("ly-sec").src = secondsImg();
     document.getElementById("sec-rot").style.zIndex = z("seconds", part("seconds"));
 
     var mov = part("movement");
@@ -203,8 +208,12 @@
     var code = encode(state);
     document.getElementById("build-code").textContent = code;
 
+    var incThumb = document.querySelector('.card[data-cat="seconds"] .thumb-dynamic');
+    if (incThumb) incThumb.style.backgroundImage = "url('" + (part("handset").includedSeconds || PARTS.seconds[0].img) + "')";
+
     var lines = CATS.map(function (c) {
       var p = part(c.id);
+      if (p.matchesHandset) return c.name + ": " + p.name + " — matches " + part("handset").name;
       return c.name + ": " + p.name + " (" + p.vendor + ")";
     });
     var body = "ACHUTA HANDMADE — commission request%0D%0A%0D%0ABuild code: " + code + "%0D%0A%0D%0A" +
@@ -254,7 +263,10 @@
       /* part cards */
       var grid = document.createElement("div");
       grid.className = "grid";
-      parts.forEach(function (p, i) {
+      var ordered = parts.map(function (p, i) { return { p: p, i: i }; });
+      ordered.sort(function (a, b) { return ((b.p.featured ? 1 : 0) - (a.p.featured ? 1 : 0)) || (a.i - b.i); });
+      ordered.forEach(function (o) {
+        var p = o.p, i = o.i;
         var b = document.createElement("button");
         b.type = "button"; b.className = "card";
         b.setAttribute("data-cat", cat.id);
@@ -262,7 +274,7 @@
         b.setAttribute("data-tags", (p.tags || []).join("|"));
         b.setAttribute("aria-pressed", "false");
         b.innerHTML =
-          '<span class="card-thumb ' + cat.thumb + '" style="background-image:url(\'' + p.img + '\')"></span>' +
+          '<span class="card-thumb ' + cat.thumb + (p.matchesHandset ? ' thumb-dynamic' : '') + '" style="background-image:url(\'' + p.img + '\')"></span>' +
           '<span class="card-name">' + p.name + '</span>' +
           '<span class="card-vendor">' + p.vendor + (p.note ? " · " + p.note : "") + '</span>' +
           '<span class="card-why"></span>';

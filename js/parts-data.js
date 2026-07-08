@@ -35,7 +35,12 @@
    4. movements may set bps (beats per second) — the preview's
       sweep steps at 60×bps micro-ticks per minute (default 6,
       i.e. 21,600 vph; a 28,800 vph movement would be bps: 8).
-   5. vendor + url are shown on the card and included in the
+   5. handsets set includedSeconds: the image of the seconds hand the
+      kit ships with. The "Included with handset" seconds option
+      (matchesHandset: true) renders that image and follows the handset
+      live; featured: true floats a part to the front of its grid
+      WITHOUT changing its code index.
+   6. vendor + url are shown on the card and included in the
       commission email.
    ═══════════════════════════════════════════════════════ */
 
@@ -110,17 +115,23 @@ var PARTS = {
 
   handset: [
     { id: "hs-baton-rose",     name: "Baton · rose gold", vendor: "ACHUTA stock", url: "",
-      tags: ["Baton", "Rose gold"], img: "parts/hs-baton-rose.png" },
+      tags: ["Baton", "Rose gold"], img: "parts/hs-baton-rose.png",
+      includedSeconds: "parts/sec-thin-rose.png" },
     { id: "hs-baton-steel",    name: "Baton · steel", vendor: "ACHUTA stock", url: "",
-      tags: ["Baton", "Steel"], img: "parts/hs-baton-steel.png" },
+      tags: ["Baton", "Steel"], img: "parts/hs-baton-steel.png",
+      includedSeconds: "parts/sec-thin-steel.png" },
     { id: "hs-sword-gold",     name: "Sword · gold", vendor: "ACHUTA stock", url: "",
-      tags: ["Sword", "Gold"], img: "parts/hs-sword-gold.png" },
+      tags: ["Sword", "Gold"], img: "parts/hs-sword-gold.png",
+      includedSeconds: "parts/sec-thin-gold.png" },
     { id: "hs-dauphine-steel", name: "Dauphine · steel", vendor: "ACHUTA stock", url: "",
-      tags: ["Dauphine", "Steel"], img: "parts/hs-dauphine-steel.png" },
+      tags: ["Dauphine", "Steel"], img: "parts/hs-dauphine-steel.png",
+      includedSeconds: "parts/sec-thin-steel.png" },
     { id: "hs-arrow-onyx",     name: "Arrow · onyx", vendor: "ACHUTA stock", url: "",
-      tags: ["Arrow", "Onyx"], img: "parts/hs-arrow-onyx.png" },
+      tags: ["Arrow", "Onyx"], img: "parts/hs-arrow-onyx.png",
+      includedSeconds: "parts/sec-arrow-onyx.png" },
     { id: "hs-alpha-rose",     name: "Alpha · rose gold", vendor: "ACHUTA stock", url: "",
-      tags: ["Alpha", "Rose gold"], img: "parts/hs-alpha-rose.png" }
+      tags: ["Alpha", "Rose gold"], img: "parts/hs-alpha-rose.png",
+      includedSeconds: "parts/sec-thin-rose.png" }
   ],
 
   seconds: [
@@ -133,7 +144,11 @@ var PARTS = {
     { id: "sec-signal",     name: "Signal sweep · red", vendor: "ACHUTA stock", url: "",
       tags: ["Red", "Thin"], img: "parts/sec-signal.png" },
     { id: "sec-arrow-gold", name: "Arrow sweep · gold", vendor: "ACHUTA stock", url: "",
-      tags: ["Gold", "Arrow"], img: "parts/sec-arrow-gold.png" }
+      tags: ["Gold", "Arrow"], img: "parts/sec-arrow-gold.png" },
+    { id: "sec-included", name: "Included with handset", vendor: "No extra part",
+      url: "", tags: ["Included"], featured: true, matchesHandset: true,
+      note: "The hand your handset ships with",
+      img: "parts/sec-thin-rose.png" }
   ],
 
   /* NEW CATEGORIES are APPENDED here, and to CATS + HISTORY in
