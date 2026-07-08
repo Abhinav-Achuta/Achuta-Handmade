@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ACHUTA part-layer generator</title>
+<style>
+  body{ margin:20px; font-family:sans-serif; }
+  .part{ display:inline-block; margin:8px; }
+  .part svg{ width:420px; height:560px; display:block; }
+  .part p{ margin:2px 0 0; font-size:11px; color:#fff; }
+</style>
+</head>
+<body>
+<div id="host"></div>
+<script>
+/* All parts share one 420×560 space, watch center at (210,280) = exact canvas
+   center, so image layers stack perfectly and the seconds hand can rotate
+   around 50%/50%. Screenshot each svg with a transparent background. */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var CX = 210, CY = 280;
+  var host = document.getElementById("host");
+
+  function el(t, a, p) { var e = document.createElementNS(NS, t); for (var k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+  function octagon(cx, cy, R) {
+    var pts = [];
+    for (var i = 0; i < 8; i++) { var a = (22.5 + i * 45) * Math.PI / 180; pts.push((cx + R * Math.cos(a)).toFixed(1) + "," + (cy + R * Math.sin(a)).toFixed(1)); }
+    return pts.join(" ");
+  }
+  function newPart(id, label) {
+    var wrap = document.createElement("div"); wrap.className = "part";
+    var svg = el("svg", { id: id, viewBox: "0 0 420 560", xmlns: NS });
+    wrap.appendChild(svg);
+    var p = document.createElement("p"); p.textContent = id + " — " + label; wrap.appendChild(p);
+    host.appendChild(wrap);
+    var defs = el("defs", {}, svg);
+    defs.innerHTML =
+      '<linearGradient id="' + id + '-rose" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eab88f"/><stop offset=".45" stop-color="#b87a52"/><stop offset=".7" stop-color="#d9a173"/><stop offset="1" stop-color="#9c603d"/></linearGradient>' +
+      '<linearGradient id="' + id + '-gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f2d692"/><stop offset=".45" stop-color="#c09441"/><stop offset=".7" stop-color="#e5c26e"/><stop offset="1" stop-color="#9d7527"/></linearGradient>' +
+      '<linearGradient id="' + id + '-steel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0f1f3"/><stop offset=".45" stop-color="#a4a7ad"/><stop offset=".7" stop-color="#d9dbdf"/><stop offset="1" stop-color="#83868c"/></linearGradient>' +
+      '<linearGradient id="' + id + '-onyx" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#565658"/><stop offset=".45" stop-color="#1d1d1f"/><stop offset=".7" stop-color="#414144"/><stop offset="1" stop-color="#111113"/></linearGradient>' +
+      '<linearGradient id="' + id + '-roseHi" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6d1ae"/><stop offset=".5" stop-color="#cf936a"/><stop offset="1" stop-color="#eab88f"/></linearGradient>' +
+      '<linearGradient id="' + id + '-goldHi" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f9e3a8"/><stop offset=".5" stop-color="#d4ab55"/><stop offset="1" stop-color="#f2d692"/></linearGradient>' +
+      '<linearGradient id="' + id + '-steelHi" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#c3c6cb"/><stop offset="1" stop-color="#eceef0"/></linearGradient>' +
+      '<linearGradient id="' + id + '-onyxHi" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6a6a6d"/><stop offset=".5" stop-color="#2a2a2d"/><stop offset="1" stop-color="#4c4c4f"/></linearGradient>' +
+      '<linearGradient id="' + id + '-glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".26"/><stop offset=".45" stop-color="#fff" stop-opacity=".04"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>' +
+      '<pattern id="' + id + '-tap" width="9" height="9" patternUnits="userSpaceOnUse"><path d="M0 0H9V9H0Z" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1"/><rect x="1.2" y="1.2" width="6.6" height="6.6" rx="1" fill="rgba(255,255,255,.07)"/></pattern>' +
+      '<radialGradient id="' + id + '-shade" cx=".38" cy=".32" r=".9"><stop offset="0" stop-color="#fff" stop-opacity=".14"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".32"/></radialGradient>' +
+      '<radialGradient id="' + id + '-sun" cx=".5" cy=".5" r=".62"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".5"/></radialGradient>' +
+      '<clipPath id="' + id + '-clip"><circle cx="210" cy="280" r="80"/></clipPath>';
+    return svg;
+  }
+  function M(id, m) { return "url(#" + id + "-" + m + ")"; }
+
+  /* ── shared pieces ── */
+  function bracelet(svg, id, metal) {
+    var g = el("g", {}, svg);
+    [-1, 1].forEach(function (dir) {
+      for (var r = 0; r < 6; r++) {
+        var t = r / 5, Wr = 148 - t * 32;
+        var y = dir < 0 ? (CY - 116 - 24 - r * 27) : (CY + 116 + r * 27);
+        el("rect", { x: CX - Wr / 2, y: y, width: Wr, height: 24, rx: 5, fill: "#000", opacity: .55 }, g);
+        var ow = Wr * 0.29, cw = Wr * 0.34;
+        el("rect", { x: CX - Wr / 2, y: y, width: ow, height: 24, rx: 5, fill: M(id, metal) }, g);
+        el("rect", { x: CX - cw / 2, y: y + 2, width: cw, height: 20, rx: 4, fill: M(id, metal + "Hi") }, g);
+        el("rect", { x: CX + Wr / 2 - ow, y: y, width: ow, height: 24, rx: 5, fill: M(id, metal) }, g);
+      }
+    });
+  }
+  function leather(svg, color) {
+    [[-1, CY - 112, 8], [1, CY + 112, 552]].forEach(function (c) {
+      el("path", { d: "M " + (CX - 62) + " " + c[1] + " L " + (CX + 62) + " " + c[1] + " L " + (CX + 46) + " " + c[2] + " Q " + CX + " " + (c[2] + (c[0] < 0 ? -10 : 10)) + " " + (CX - 46) + " " + c[2] + " Z", fill: color, stroke: "rgba(0,0,0,.5)", "stroke-width": 1 }, svg);
+      el("path", { d: "M " + (CX - 52) + " " + (c[1] + c[0] * 8) + " L " + (CX - 40) + " " + (c[2] - c[0] * 6) + " M " + (CX + 52) + " " + (c[1] + c[0] * 8) + " L " + (CX + 40) + " " + (c[2] - c[0] * 6), stroke: "rgba(234,227,214,.4)", "stroke-width": 1, "stroke-dasharray": "3 4", fill: "none" }, svg);
+    });
+  }
+  function rubber(svg) {
+    [[-1, CY - 112, 8], [1, CY + 112, 552]].forEach(function (c) {
+      el("path", { d: "M " + (CX - 60) + " " + c[1] + " L " + (CX + 60) + " " + c[1] + " L " + (CX + 44) + " " + c[2] + " Q " + CX + " " + (c[2] + (c[0] < 0 ? -8 : 8)) + " " + (CX - 44) + " " + c[2] + " Z", fill: "#15161a", stroke: "rgba(0,0,0,.6)", "stroke-width": 1 }, svg);
+      for (var i = 1; i <= 5; i++) {
+        var yy = c[1] + c[0] * (18 + i * 26);
+        if ((c[0] < 0 && yy > c[2]) || (c[0] > 0 && yy < c[2]))
+          el("line", { x1: CX - 52 + i * 1.4, y1: yy, x2: CX + 52 - i * 1.4, y2: yy, stroke: "rgba(255,255,255,.10)", "stroke-width": 3, "stroke-linecap": "round" }, svg);
+      }
+    });
+  }
+  function crown(svg, id, metal, guards) {
+    if (guards) {
+      el("path", { d: "M " + (CX + 104) + " " + (CY - 24) + " Q " + (CX + 140) + " " + CY + " " + (CX + 104) + " " + (CY + 24) + " Z", fill: M(id, metal), stroke: "rgba(0,0,0,.45)", "stroke-width": 1 }, svg);
+    }
+    var g = el("g", {}, svg);
+    el("rect", { x: CX + 108, y: CY - 11, width: 26, height: 22, rx: 6, fill: M(id, metal) }, g);
+    for (var cr = 0; cr < 4; cr++) el("rect", { x: CX + 112 + cr * 5.4, y: CY - 11, width: 2, height: 22, fill: "rgba(0,0,0,.35)" }, g);
+  }
+  function screwsOct(svg, id) {
+    var slots = [15, 80, 40, 120, 60, 150, 100, 30];
+    for (var i = 0; i < 8; i++) {
+      var a = (22.5 + i * 45) * Math.PI / 180;
+      var sx = CX + 102 * Math.cos(a) * 0.92, sy = CY + 102 * Math.sin(a) * 0.92, hex = [];
+      for (var h = 0; h < 6; h++) { var ha = h * 60 * Math.PI / 180; hex.push((sx + 6.4 * Math.cos(ha)).toFixed(1) + "," + (sy + 6.4 * Math.sin(ha)).toFixed(1)); }
+      el("polygon", { points: hex.join(" "), fill: M(id, "steel"), stroke: "rgba(0,0,0,.6)", "stroke-width": .8 }, svg);
+      el("line", { x1: sx - 4.2 * Math.cos(slots[i] * Math.PI / 180), y1: sy - 4.2 * Math.sin(slots[i] * Math.PI / 180), x2: sx + 4.2 * Math.cos(slots[i] * Math.PI / 180), y2: sy + 4.2 * Math.sin(slots[i] * Math.PI / 180), stroke: "#2a2a2c", "stroke-width": 1.6, "stroke-linecap": "round" }, svg);
+    }
+  }
+  function chapter(svg) { el("circle", { cx: CX, cy: CY, r: 86, fill: "#0d0c0b" }, svg); }
+
+  /* ── CASES (include strap/bracelet, bezel, crown, dark dial-seat) ── */
+  function caseOct(id, metal) {
+    var s = newPart(id, "octagon case · " + metal);
+    bracelet(s, id, metal);
+    crown(s, id, metal, false);
+    el("polygon", { points: octagon(CX, CY, 126), fill: M(id, metal), stroke: "rgba(0,0,0,.55)", "stroke-width": 1.5, "stroke-linejoin": "round" }, s);
+    el("polygon", { points: octagon(CX, CY, 126), fill: "none", stroke: "rgba(255,255,255,.12)", "stroke-linejoin": "round" }, s);
+    el("polygon", { points: octagon(CX, CY, 102), fill: M(id, metal), stroke: "rgba(0,0,0,.5)", "stroke-width": 1.2, "stroke-linejoin": "round" }, s);
+    el("polygon", { points: octagon(CX, CY, 102), fill: "none", stroke: "rgba(255,255,255,.16)", "stroke-width": .8, "stroke-linejoin": "round" }, s);
+    screwsOct(s, id);
+    chapter(s);
+  }
+  caseOct("case-oct-rose", "rose");
+  caseOct("case-oct-steel", "steel");
+
+  (function caseDiver() {
+    var id = "case-diver-steel";
+    var s = newPart(id, "diver case · steel");
+    rubber(s);
+    crown(s, id, "steel", true);
+    el("circle", { cx: CX, cy: CY, r: 122, fill: M(id, "steel"), stroke: "rgba(0,0,0,.55)", "stroke-width": 1.5 }, s);
+    el("circle", { cx: CX, cy: CY, r: 106, fill: M(id, "steelHi"), stroke: "rgba(0,0,0,.4)" }, s);
+    el("circle", { cx: CX, cy: CY, r: 100, fill: "#101114", stroke: "rgba(255,255,255,.14)", "stroke-width": .8 }, s);
+    for (var m = 0; m < 60; m++) {
+      var a = m * 6 * Math.PI / 180, big = m % 5 === 0, r1 = big ? 90 : 94;
+      el("line", { x1: CX + r1 * Math.sin(a), y1: CY - r1 * Math.cos(a), x2: CX + 98 * Math.sin(a), y2: CY - 98 * Math.cos(a), stroke: big ? "#e8e4da" : "rgba(232,228,218,.5)", "stroke-width": big ? 2 : 1 }, s);
+    }
+    el("polygon", { points: (CX - 5) + "," + (CY - 98) + " " + (CX + 5) + "," + (CY - 98) + " " + CX + "," + (CY - 88), fill: "#e8e4da" }, s);
+    chapter(s);
+  })();
+
+  (function caseCushion() {
+    var id = "case-cushion-onyx";
+    var s = newPart(id, "cushion case · onyx");
+    leather(s, "#1d1713");
+    crown(s, id, "onyx", false);
+    el("rect", { x: CX - 116, y: CY - 116, width: 232, height: 232, rx: 62, fill: M(id, "onyx"), stroke: "rgba(0,0,0,.6)", "stroke-width": 1.5 }, s);
+    el("rect", { x: CX - 116, y: CY - 116, width: 232, height: 232, rx: 62, fill: "none", stroke: "rgba(255,255,255,.10)" }, s);
+    el("circle", { cx: CX, cy: CY, r: 98, fill: M(id, "onyxHi"), stroke: "rgba(0,0,0,.5)" }, s);
+    chapter(s);
+  })();
+
+  /* ── DIALS (texture + ticks + indices + logo, glass sheen) ── */
+  function dialBase(id, label, base, textCol, tickCol) {
+    var s = newPart(id, label);
+    el("circle", { cx: CX, cy: CY, r: 80, fill: base }, s);
+    return s;
+  }
+  function dialFurniture(s, id, tickCol, textCol, idxMetal, printed) {
+    for (var m = 0; m < 60; m++) {
+      var a = m * 6 * Math.PI / 180, big = m % 5 === 0, r1 = big ? 72.5 : 75.5;
+      el("line", { x1: CX + r1 * Math.sin(a), y1: CY - r1 * Math.cos(a), x2: CX + 79 * Math.sin(a), y2: CY - 79 * Math.cos(a), stroke: tickCol, "stroke-width": big ? 1.5 : .8 }, s);
+    }
+    for (var hr = 1; hr <= 12; hr++) {
+      var g = el("g", { transform: "rotate(" + hr * 30 + " " + CX + " " + CY + ")" }, s);
+      function baton(px) {
+        if (printed) { el("rect", { x: px - 2.4, y: CY - 72, width: 4.8, height: 20, rx: 2, fill: textCol }, g); return; }
+        el("rect", { x: px - 3.4, y: CY - 72, width: 6.8, height: 21, rx: 2, fill: M(id, idxMetal), stroke: "rgba(0,0,0,.4)", "stroke-width": .6 }, g);
+        el("rect", { x: px - 1.2, y: CY - 68.6, width: 2.4, height: 14.2, rx: 1.1, fill: "#efe9dc" }, g);
+      }
+      if (hr === 12) { baton(CX - 4.6); baton(CX + 4.6); } else baton(CX);
+    }
+    var t1 = el("text", { x: CX, y: CY - 32, "text-anchor": "middle", "font-family": "Cormorant Garamond, Georgia, serif", "font-size": 14.5, "font-weight": 500, "letter-spacing": 2.2, fill: textCol }, s); t1.textContent = "ACHUTA";
+    var t2 = el("text", { x: CX, y: CY - 22, "text-anchor": "middle", "font-family": "Jost, sans-serif", "font-size": 5.6, "letter-spacing": 3.4, fill: textCol }, s); t2.textContent = "HANDMADE";
+    var t3 = el("text", { x: CX, y: CY + 46, "text-anchor": "middle", "font-family": "Jost, sans-serif", "font-size": 6.4, "letter-spacing": 2.6, fill: textCol }, s); t3.textContent = "AUTOMATIC";
+    el("ellipse", { cx: CX - 26, cy: CY - 30, rx: 72, ry: 42, transform: "rotate(-28 " + (CX - 26) + " " + (CY - 30) + ")", fill: M(id, "glass"), "clip-path": "url(#" + id + "-clip)" }, s);
+  }
+  function dialTap(id, label, base, textCol, tickCol, idxMetal) {
+    var s = dialBase(id, label, base, textCol, tickCol);
+    el("circle", { cx: CX, cy: CY, r: 80, fill: M(id, "tap"), "clip-path": "url(#" + id + "-clip)" }, s);
+    el("circle", { cx: CX, cy: CY, r: 80, fill: M(id, "shade") }, s);
+    dialFurniture(s, id, tickCol, textCol, idxMetal, false);
+  }
+  function dialSun(id, label, base, textCol, tickCol, idxMetal) {
+    var s = dialBase(id, label, base, textCol, tickCol);
+    for (var i = 0; i < 90; i++) {
+      var a = i * 4 * Math.PI / 180;
+      el("line", { x1: CX + 8 * Math.sin(a), y1: CY - 8 * Math.cos(a), x2: CX + 80 * Math.sin(a), y2: CY - 80 * Math.cos(a), stroke: "rgba(255,255,255,.045)", "stroke-width": 1, "clip-path": "url(#" + id + "-clip)" }, s);
+    }
+    el("circle", { cx: CX, cy: CY, r: 80, fill: M(id, "sun") }, s);
+    dialFurniture(s, id, tickCol, textCol, idxMetal, false);
+  }
+  dialTap("dial-salmon", "salmon tapisserie", "#dcae94", "#3a2d24", "rgba(58,45,36,.6)", "rose");
+  dialTap("dial-blue", "midnight tapisserie", "#22406b", "#eae3d4", "rgba(255,255,255,.45)", "steel");
+  dialTap("dial-forest", "forest tapisserie", "#1e4032", "#eae3d4", "rgba(255,255,255,.4)", "gold");
+  dialSun("dial-noir", "noir sunburst", "#16181c", "#eae3d4", "rgba(255,255,255,.4)", "steel");
+  dialSun("dial-fume", "charcoal fumé", "#3a3d43", "#eae3d4", "rgba(255,255,255,.42)", "rose");
+  (function dialIvory() {
+    var id = "dial-ivory", s = dialBase(id, "ivory matte", "#eae2d0", "#2e2a22", "rgba(48,42,34,.55)");
+    el("circle", { cx: CX, cy: CY, r: 80, fill: M(id, "shade"), opacity: .5 }, s);
+    dialFurniture(s, id, "rgba(48,42,34,.55)", "#2e2a22", "gold", true);
+  })();
+
+  /* ── HANDSETS (hour + minute at 10:08, pinion cap) ── */
+  function handset(id, label, style, metal) {
+    var s = newPart(id, label);
+    function hand(len, wid, rot) {
+      var g = el("g", { transform: "rotate(" + rot + " " + CX + " " + CY + ")" }, s);
+      if (style === "baton") {
+        el("path", { d: "M " + (CX - wid) + " " + CY + " L " + (CX - wid * .74) + " " + (CY - len) + " L " + CX + " " + (CY - len - 5) + " L " + (CX + wid * .74) + " " + (CY - len) + " L " + (CX + wid) + " " + CY + " Z", fill: M(id, metal), stroke: "rgba(0,0,0,.4)", "stroke-width": .7 }, g);
+        el("rect", { x: CX - 1.1, y: CY - len + 4, width: 2.2, height: len * .52, rx: 1, fill: "#efe9dc" }, g);
+      } else if (style === "sword") {
+        el("path", { d: "M " + (CX - wid * 1.4) + " " + (CY - len * .28) + " L " + CX + " " + (CY - len - 6) + " L " + (CX + wid * 1.4) + " " + (CY - len * .28) + " L " + (CX + 1.6) + " " + CY + " L " + (CX - 1.6) + " " + CY + " Z", fill: M(id, metal), stroke: "rgba(0,0,0,.4)", "stroke-width": .7 }, g);
+        el("path", { d: "M " + (CX - wid * .5) + " " + (CY - len * .3) + " L " + CX + " " + (CY - len) + " L " + (CX + wid * .5) + " " + (CY - len * .3) + " Z", fill: "#efe9dc" }, g);
+      } else if (style === "dauphine") {
+        el("path", { d: "M " + (CX - wid * 1.2) + " " + CY + " L " + CX + " " + (CY - len - 4) + " L " + (CX + wid * 1.2) + " " + CY + " Z", fill: M(id, metal), stroke: "rgba(0,0,0,.4)", "stroke-width": .7 }, g);
+        el("line", { x1: CX, y1: CY, x2: CX, y2: CY - len - 2, stroke: "rgba(0,0,0,.35)", "stroke-width": .8 }, g);
+      } else if (style === "arrow") {
+        el("line", { x1: CX, y1: CY, x2: CX, y2: CY - len * .55, stroke: M(id, metal), "stroke-width": 3.4 }, g);
+        el("polygon", { points: (CX - wid * 1.5) + "," + (CY - len * .55) + " " + CX + "," + (CY - len - 6) + " " + (CX + wid * 1.5) + "," + (CY - len * .55), fill: M(id, metal), stroke: "rgba(0,0,0,.4)", "stroke-width": .7 }, g);
+        el("polygon", { points: (CX - wid * .8) + "," + (CY - len * .58) + " " + CX + "," + (CY - len * .92) + " " + (CX + wid * .8) + "," + (CY - len * .58), fill: "#efe9dc" }, g);
+      } else { /* alpha */
+        el("path", { d: "M " + (CX - 1.4) + " " + CY + " L " + (CX - wid * 1.15) + " " + (CY - len * .42) + " L " + CX + " " + (CY - len - 5) + " L " + (CX + wid * 1.15) + " " + (CY - len * .42) + " L " + (CX + 1.4) + " " + CY + " Z", fill: M(id, metal), stroke: "rgba(0,0,0,.4)", "stroke-width": .7 }, g);
+        el("path", { d: "M " + (CX - wid * .45) + " " + (CY - len * .42) + " L " + CX + " " + (CY - len * .88) + " L " + (CX + wid * .45) + " " + (CY - len * .42) + " Z", fill: "#efe9dc" }, g);
+      }
+    }
+    hand(48, 3.5, 304.3);   /* hour */
+    hand(68, 3.1, 51.4);    /* minute */
+    el("circle", { cx: CX, cy: CY, r: 4.4, fill: M(id, metal), stroke: "rgba(0,0,0,.45)", "stroke-width": .8 }, s);
+    el("circle", { cx: CX, cy: CY, r: 1.6, fill: "#1c1a18" }, s);
+  }
+  handset("hs-baton-rose", "baton · rose", "baton", "rose");
+  handset("hs-baton-steel", "baton · steel", "baton", "steel");
+  handset("hs-sword-gold", "sword · gold", "sword", "gold");
+  handset("hs-dauphine-steel", "dauphine · steel", "dauphine", "steel");
+  handset("hs-arrow-onyx", "arrow · onyx", "arrow", "onyx");
+  handset("hs-alpha-rose", "alpha · rose", "alpha", "rose");
+
+  /* ── SECONDS (drawn pointing at 12 so the layer can sweep) ── */
+  function seconds(id, label, color, kind) {
+    var s = newPart(id, label);
+    el("line", { x1: CX, y1: CY + 16, x2: CX, y2: CY - 72, stroke: color, "stroke-width": 1.5, "stroke-linecap": "round" }, s);
+    if (kind === "lollipop") el("circle", { cx: CX, cy: CY - 58, r: 4.6, fill: "#efe9dc", stroke: color, "stroke-width": 1.2 }, s);
+    if (kind === "arrow") el("polygon", { points: (CX - 4) + "," + (CY - 56) + " " + CX + "," + (CY - 70) + " " + (CX + 4) + "," + (CY - 56), fill: color }, s);
+    el("circle", { cx: CX, cy: CY + 11, r: 3.4, fill: color }, s);
+    el("circle", { cx: CX, cy: CY, r: 2.2, fill: color }, s);
+  }
+  seconds("sec-thin-rose", "thin · rose", "#c98a5f", "thin");
+  seconds("sec-thin-steel", "thin · steel", "#d6d9dd", "thin");
+  seconds("sec-lollipop", "lollipop · white", "#d6d9dd", "lollipop");
+  seconds("sec-signal", "signal · red", "#b3382e", "thin");
+  seconds("sec-arrow-gold", "arrow · gold", "#cfa54e", "arrow");
+
+  /* ── movement overlays: date window / day-date / GMT hand ── */
+  (function () {
+    var s = newPart("ovl-date", "date window");
+    el("rect", { x: CX + 46, y: CY - 8.5, width: 21, height: 17, rx: 2, fill: "#f2efe8", stroke: "#9a9da3", "stroke-width": 1.6 }, s);
+    var t = el("text", { x: CX + 56.5, y: CY + 4, "text-anchor": "middle", "font-family": "Jost, sans-serif", "font-size": 10, fill: "#22201d" }, s); t.textContent = "28";
+  })();
+  (function () {
+    var s = newPart("ovl-daydate", "day-date window");
+    el("rect", { x: CX + 34, y: CY - 8.5, width: 34, height: 17, rx: 2, fill: "#f2efe8", stroke: "#9a9da3", "stroke-width": 1.6 }, s);
+    var t1 = el("text", { x: CX + 44, y: CY + 3.5, "text-anchor": "middle", "font-family": "Jost, sans-serif", "font-size": 7, fill: "#22201d" }, s); t1.textContent = "TUE";
+    var t2 = el("text", { x: CX + 60, y: CY + 4, "text-anchor": "middle", "font-family": "Jost, sans-serif", "font-size": 10, fill: "#22201d" }, s); t2.textContent = "28";
+  })();
+  (function () {
+    var id = "ovl-gmt", s = newPart(id, "GMT hand");
+    var g = el("g", { transform: "rotate(128 " + CX + " " + CY + ")" }, s);
+    el("line", { x1: CX, y1: CY + 8, x2: CX, y2: CY - 52, stroke: M(id, "steel"), "stroke-width": 2.4 }, g);
+    el("polygon", { points: (CX - 5) + "," + (CY - 52) + " " + CX + "," + (CY - 66) + " " + (CX + 5) + "," + (CY - 52), fill: "#b3382e", stroke: "rgba(0,0,0,.4)", "stroke-width": .6 }, g);
+  })();
+
+  /* ── movement thumbnails (cards only, not stacked) ── */
+  function movement(id, label, kind) {
+    var s = newPart(id, label);
+    el("circle", { cx: CX, cy: CY, r: 92, fill: M(id, "steelHi"), stroke: "rgba(0,0,0,.5)", "stroke-width": 2 }, s);
+    el("circle", { cx: CX, cy: CY, r: 92, fill: "none", stroke: "rgba(255,255,255,.25)" }, s);
+    el("path", { d: "M " + CX + " " + CY + " L " + (CX + 88) + " " + (CY - 26) + " A 92 92 0 0 1 " + (CX - 20) + " " + (CY + 90) + " Z", fill: M(id, "steel"), stroke: "rgba(0,0,0,.35)", "stroke-width": 1.2 }, s);
+    el("circle", { cx: CX, cy: CY, r: 14, fill: M(id, "steel"), stroke: "rgba(0,0,0,.4)" }, s);
+    el("circle", { cx: CX, cy: CY, r: 4, fill: "#8e2f27" }, s);
+    el("circle", { cx: CX - 44, cy: CY + 40, r: 24, fill: "none", stroke: M(id, "gold"), "stroke-width": 3.5 }, s);
+    el("circle", { cx: CX - 44, cy: CY + 40, r: 4, fill: "#8e2f27" }, s);
+    [[-52, -38], [30, -62], [62, 30]].forEach(function (j) { el("circle", { cx: CX + j[0], cy: CY + j[1], r: 3.4, fill: "#a03a30", stroke: "rgba(0,0,0,.4)" }, s); });
+    if (kind === "daydate") el("circle", { cx: CX, cy: CY, r: 66, fill: "none", stroke: "rgba(0,0,0,.25)", "stroke-width": 8, "stroke-dasharray": "5 7" }, s);
+    if (kind === "gmt") el("circle", { cx: CX + 52, cy: CY - 8, r: 6, fill: "#b3382e" }, s);
+    var t = el("text", { x: CX + 34, y: CY + 58, "text-anchor": "middle", "font-family": "Jost, sans-serif", "font-size": 13, "letter-spacing": 2, fill: "#3a3c40", transform: "rotate(-24 " + (CX + 34) + " " + (CY + 58) + ")" }, s);
+    t.textContent = label.toUpperCase();
+  }
+  movement("mov-nh35", "NH35", "date");
+  movement("mov-nh36", "NH36", "daydate");
+  movement("mov-nh38", "NH38", "plain");
+  movement("mov-nh34", "NH34 GMT", "gmt");
+})();
+</script>
+</body>
+</html>

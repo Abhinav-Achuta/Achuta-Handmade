@@ -20,79 +20,29 @@
 
 <main class="builder">
 
-  <!-- ══════════ live watch ══════════ -->
+  <!-- ══════════ live watch — stacked part layers ══════════ -->
   <div class="stage">
     <div class="stage-glow" aria-hidden="true"></div>
-    <svg id="watch" viewBox="0 0 420 560" role="img" aria-label="Your watch configuration, updated live">
-      <defs>
-        <!-- metals -->
-        <linearGradient id="g-rose" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#eab88f"/><stop offset=".45" stop-color="#b87a52"/>
-          <stop offset=".7" stop-color="#d9a173"/><stop offset="1" stop-color="#9c603d"/>
-        </linearGradient>
-        <linearGradient id="g-gold" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#f2d692"/><stop offset=".45" stop-color="#c09441"/>
-          <stop offset=".7" stop-color="#e5c26e"/><stop offset="1" stop-color="#9d7527"/>
-        </linearGradient>
-        <linearGradient id="g-steel" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#f0f1f3"/><stop offset=".45" stop-color="#a4a7ad"/>
-          <stop offset=".7" stop-color="#d9dbdf"/><stop offset="1" stop-color="#83868c"/>
-        </linearGradient>
-        <linearGradient id="g-onyx" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#565658"/><stop offset=".45" stop-color="#1d1d1f"/>
-          <stop offset=".7" stop-color="#414144"/><stop offset="1" stop-color="#111113"/>
-        </linearGradient>
-        <!-- polished center links -->
-        <linearGradient id="g-rose-hi" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#f6d1ae"/><stop offset=".5" stop-color="#cf936a"/><stop offset="1" stop-color="#eab88f"/>
-        </linearGradient>
-        <linearGradient id="g-gold-hi" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#f9e3a8"/><stop offset=".5" stop-color="#d4ab55"/><stop offset="1" stop-color="#f2d692"/>
-        </linearGradient>
-        <linearGradient id="g-steel-hi" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#c3c6cb"/><stop offset="1" stop-color="#eceef0"/>
-        </linearGradient>
-        <linearGradient id="g-onyx-hi" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#6a6a6d"/><stop offset=".5" stop-color="#2a2a2d"/><stop offset="1" stop-color="#4c4c4f"/>
-        </linearGradient>
-        <!-- glass sheen -->
-        <linearGradient id="g-glass" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#ffffff" stop-opacity=".28"/>
-          <stop offset=".45" stop-color="#ffffff" stop-opacity=".04"/>
-          <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
-        </linearGradient>
-        <!-- tapisserie texture (color-independent overlay) -->
-        <pattern id="tap" width="9" height="9" patternUnits="userSpaceOnUse">
-          <rect width="9" height="9" fill="none"/>
-          <path d="M0 0H9V9H0Z" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1"/>
-          <rect x="1.2" y="1.2" width="6.6" height="6.6" rx="1" fill="rgba(255,255,255,.07)"/>
-        </pattern>
-        <radialGradient id="g-dialshade" cx=".38" cy=".32" r=".9">
-          <stop offset="0" stop-color="#ffffff" stop-opacity=".14"/>
-          <stop offset=".55" stop-color="#ffffff" stop-opacity="0"/>
-          <stop offset="1" stop-color="#000000" stop-opacity=".32"/>
-        </radialGradient>
-        <clipPath id="clip-dial"><circle cx="210" cy="280" r="80"/></clipPath>
-      </defs>
-
-      <!-- built by JS: straps/bracelet → case → bezel → dial → furniture → hands -->
-      <g id="w-root"></g>
-    </svg>
-    <p class="stage-caption">Seiko NH35 · automatic · assembled by hand</p>
+    <div class="stack" role="img" aria-label="Your watch, assembled live from the parts you choose">
+      <img class="layer" id="ly-case" alt="">
+      <img class="layer" id="ly-dial" alt="">
+      <img class="layer" id="ly-ovl1" alt="">
+      <img class="layer" id="ly-ovl2" alt="">
+      <img class="layer" id="ly-hands" alt="">
+      <div class="layer sec-rot" id="sec-rot"><img class="layer" id="ly-sec" alt=""></div>
+    </div>
+    <p class="stage-caption" id="stage-spec">Seiko NH35 · automatic</p>
+  </div>
+    <div class="stage-glow" aria-hidden="true"></div>
   </div>
 
   <!-- ══════════ configurator ══════════ -->
   <div class="panel">
     <p class="eyebrow">Your commission</p>
     <h1 class="panel-title">Build <em>your own.</em></h1>
-    <p class="panel-sub">Choose each part. The bench does the rest.</p>
+    <p class="panel-sub">Pick real parts, stacked live. The bench does the rest.</p>
 
     <div id="categories"></div>
-
-    <div class="fixed-spec">
-      <span class="spec-k">Movement</span>
-      <span class="spec-v">Seiko NH35 · automatic · every build</span>
-    </div>
 
     <!-- build code -->
     <div class="code-box">
@@ -125,6 +75,7 @@
 
 </main>
 
+<script src="js/parts-data.js"></script>
 <script src="js/builder.js"></script>
 </body>
 </html>

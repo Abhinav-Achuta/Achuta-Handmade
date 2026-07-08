@@ -1,0 +1,99 @@
+/* ═══════════════════════════════════════════════════════
+   ACHUTA HANDMADE — parts catalogue
+   ─────────────────────────────────────────────────────────
+   ADDING A REAL VENDOR PART (e.g. from Nomad Watch Works,
+   Namoki, Crystaltimes, DLW …):
+
+   1. Save a transparent PNG of the part, aligned on the same
+      840×1120 canvas (watch centre at exactly 50%/50%,
+      dial diameter ≈ 38% of canvas width) into /parts.
+      • cases include bezel, crown and strap/bracelet
+      • dials include indices and minute track
+      • handsets are hour+minute set at 10:08
+      • seconds hands are drawn pointing at 12 (they sweep live)
+   2. APPEND an entry to the END of the category list below —
+      never reorder or delete entries, or previously issued
+      build codes will point at the wrong parts.
+   3. vendor + url are shown on the card and included in the
+      commission email.
+   ═══════════════════════════════════════════════════════ */
+
+var PARTS = {
+
+  case: [
+    { id: "case-oct-rose",    name: "Octagon · rose gold", vendor: "ACHUTA stock", url: "",
+      tags: ["Octagon", "Rose gold", "Bracelet"], img: "parts/case-oct-rose.png",
+      note: "Integrated bracelet" },
+    { id: "case-oct-steel",   name: "Octagon · steel", vendor: "ACHUTA stock", url: "",
+      tags: ["Octagon", "Steel", "Bracelet"], img: "parts/case-oct-steel.png",
+      note: "Integrated bracelet" },
+    { id: "case-diver-steel", name: "Diver · steel", vendor: "ACHUTA stock", url: "",
+      tags: ["Round", "Steel", "Rubber"], img: "parts/case-diver-steel.png",
+      note: "120-click bezel · rubber strap" },
+    { id: "case-cushion-onyx", name: "Cushion · onyx", vendor: "ACHUTA stock", url: "",
+      tags: ["Cushion", "Onyx", "Leather"], img: "parts/case-cushion-onyx.png",
+      note: "Leather noir strap" }
+  ],
+
+  movement: [
+    { id: "mov-nh35", name: "Seiko NH35", vendor: "Seiko · TMI", url: "",
+      tags: ["Date", "Hacking"], img: "parts/mov-nh35.png",
+      overlays: ["parts/ovl-date.png"],
+      spec: "Automatic · date · 21,600 vph · sweeping seconds" },
+    { id: "mov-nh36", name: "Seiko NH36", vendor: "Seiko · TMI", url: "",
+      tags: ["Day-date", "Hacking"], img: "parts/mov-nh36.png",
+      overlays: ["parts/ovl-daydate.png"],
+      spec: "Automatic · day-date · 21,600 vph · sweeping seconds" },
+    { id: "mov-nh38", name: "Seiko NH38", vendor: "Seiko · TMI", url: "",
+      tags: ["No date", "Hacking"], img: "parts/mov-nh38.png",
+      overlays: [],
+      spec: "Automatic · no date · clean dial · sweeping seconds" },
+    { id: "mov-nh34", name: "Seiko NH34 GMT", vendor: "Seiko · TMI", url: "",
+      tags: ["GMT", "Date"], img: "parts/mov-nh34.png",
+      overlays: ["parts/ovl-date.png", "parts/ovl-gmt.png"],
+      spec: "Automatic · true GMT · date · sweeping seconds" }
+  ],
+
+  dial: [
+    { id: "dial-salmon", name: "Salmon tapisserie", vendor: "ACHUTA stock", url: "",
+      tags: ["Warm", "Tapisserie"], img: "parts/dial-salmon.png" },
+    { id: "dial-blue",   name: "Midnight tapisserie", vendor: "ACHUTA stock", url: "",
+      tags: ["Cool", "Tapisserie"], img: "parts/dial-blue.png" },
+    { id: "dial-forest", name: "Forest tapisserie", vendor: "ACHUTA stock", url: "",
+      tags: ["Cool", "Tapisserie"], img: "parts/dial-forest.png" },
+    { id: "dial-noir",   name: "Noir sunburst", vendor: "ACHUTA stock", url: "",
+      tags: ["Dark", "Sunburst"], img: "parts/dial-noir.png" },
+    { id: "dial-fume",   name: "Charcoal fumé", vendor: "ACHUTA stock", url: "",
+      tags: ["Dark", "Sunburst"], img: "parts/dial-fume.png" },
+    { id: "dial-ivory",  name: "Ivory matte", vendor: "ACHUTA stock", url: "",
+      tags: ["Light", "Matte"], img: "parts/dial-ivory.png" }
+  ],
+
+  handset: [
+    { id: "hs-baton-rose",     name: "Baton · rose gold", vendor: "ACHUTA stock", url: "",
+      tags: ["Baton", "Rose gold"], img: "parts/hs-baton-rose.png" },
+    { id: "hs-baton-steel",    name: "Baton · steel", vendor: "ACHUTA stock", url: "",
+      tags: ["Baton", "Steel"], img: "parts/hs-baton-steel.png" },
+    { id: "hs-sword-gold",     name: "Sword · gold", vendor: "ACHUTA stock", url: "",
+      tags: ["Sword", "Gold"], img: "parts/hs-sword-gold.png" },
+    { id: "hs-dauphine-steel", name: "Dauphine · steel", vendor: "ACHUTA stock", url: "",
+      tags: ["Dauphine", "Steel"], img: "parts/hs-dauphine-steel.png" },
+    { id: "hs-arrow-onyx",     name: "Arrow · onyx", vendor: "ACHUTA stock", url: "",
+      tags: ["Arrow", "Onyx"], img: "parts/hs-arrow-onyx.png" },
+    { id: "hs-alpha-rose",     name: "Alpha · rose gold", vendor: "ACHUTA stock", url: "",
+      tags: ["Alpha", "Rose gold"], img: "parts/hs-alpha-rose.png" }
+  ],
+
+  seconds: [
+    { id: "sec-thin-rose",  name: "Thin sweep · rose gold", vendor: "ACHUTA stock", url: "",
+      tags: ["Rose gold", "Thin"], img: "parts/sec-thin-rose.png" },
+    { id: "sec-thin-steel", name: "Thin sweep · steel", vendor: "ACHUTA stock", url: "",
+      tags: ["Steel", "Thin"], img: "parts/sec-thin-steel.png" },
+    { id: "sec-lollipop",   name: "Lollipop sweep · lume", vendor: "ACHUTA stock", url: "",
+      tags: ["Lume", "Lollipop"], img: "parts/sec-lollipop.png" },
+    { id: "sec-signal",     name: "Signal sweep · red", vendor: "ACHUTA stock", url: "",
+      tags: ["Red", "Thin"], img: "parts/sec-signal.png" },
+    { id: "sec-arrow-gold", name: "Arrow sweep · gold", vendor: "ACHUTA stock", url: "",
+      tags: ["Gold", "Arrow"], img: "parts/sec-arrow-gold.png" }
+  ]
+};
