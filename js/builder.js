@@ -232,9 +232,20 @@
       var sec = document.createElement("section");
       sec.className = "cat";
       sec.innerHTML =
-        '<div class="cat-head"><span class="cat-name">' + cat.name +
-        ' <span class="cat-count">' + parts.length + '</span></span>' +
-        '<span class="cat-current" id="cur-' + cat.id + '"></span></div>';
+        '<div class="cat-head">' +
+        '<button type="button" class="cat-toggle" aria-expanded="true" aria-controls="body-' + cat.id + '">' +
+        '<i class="caret" aria-hidden="true"></i>' +
+        '<span class="cat-name">' + cat.name + ' <span class="cat-count">' + parts.length + '</span></span>' +
+        '</button>' +
+        '<span class="cat-current" id="cur-' + cat.id + '"></span></div>' +
+        '<div class="cat-body" id="body-' + cat.id + '"><div class="cat-body-inner"></div></div>';
+      var inner = sec.querySelector(".cat-body-inner");
+      var tog = sec.querySelector(".cat-toggle");
+      tog.addEventListener("click", function () {
+        var collapsed = sec.classList.toggle("is-collapsed");
+        tog.setAttribute("aria-expanded", String(!collapsed));
+        inner.inert = collapsed;                 /* hidden parts leave the tab order */
+      });
 
       /* filter chips from the union of tags */
       var tags = [];
@@ -258,7 +269,7 @@
       }
       chip("All", null).setAttribute("aria-pressed", "true");
       tags.forEach(function (t) { chip(t, t); });
-      sec.appendChild(chips);
+      inner.appendChild(chips);
 
       /* part cards */
       var grid = document.createElement("div");
@@ -284,7 +295,7 @@
         });
         grid.appendChild(b);
       });
-      sec.appendChild(grid);
+      inner.appendChild(grid);
       host.appendChild(sec);
     });
 

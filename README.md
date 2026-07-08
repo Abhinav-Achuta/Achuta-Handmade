@@ -36,7 +36,9 @@ tools/alignment-template.png  guide overlay for positioning YOUR part photos
 parts-catalogue configurator: clients click real parts — case, band/bracelet,
 movement, dial, handset, sweeping seconds hand, date wheel — and each choice swaps a transparent
 image layer in the live stacked preview. Filter chips above each category
-narrow parts by tags (Octagon / Round, Warm / Dark, Baton / Sword, …).
+narrow parts by tags (Octagon / Round, Warm / Dark, Baton / Sword, …),
+and each category collapses behind the small triangle in its header —
+the current pick stays visible while collapsed.
 Handsets ship with a matching seconds hand: the "Included with
 handset" option (the default) renders whichever hand matches the chosen
 handset and follows it live — picking any other seconds hand is the
