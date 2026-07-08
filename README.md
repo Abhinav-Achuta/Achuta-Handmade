@@ -15,12 +15,35 @@ Then open **http://localhost:8080** — or use any static server (`npx serve`, n
 
 ```
 index.html          structure + copy
+builder.html        Build-your-own configurator (live watch + build codes)
 css/style.css       design system (void black / rose gold, Cormorant Garamond + Jost)
+css/builder.css     builder page layout
 js/app.js           scroll engine — no libraries
+js/builder.js       configurator + build-code encode/decode
 seq/hero/           193 frames · clip 1 · hero orbit
 seq/macro/          193 frames · clip 2 · macro fly-through
 seq/expl/           193 frames · clip 3 · exploded assembly
 ```
+
+## The builder & build codes
+
+`builder.html` (linked from the Build your own CTA and the header) lets clients
+assemble a watch part by part — case, bezel, dial, hands, seconds hand, indices,
+bracelet/strap, date — with a live rendering. Movement is fixed as Seiko NH35.
+
+Every configuration produces a **build code** like `AH-34232-52334`:
+
+- One character per part choice plus a version marker and a checksum, drawn
+  from an unambiguous alphabet (no 0/O, 1/I/L, or U).
+- Clients hit **Copy code** or **Send commission** (a prefilled email carrying
+  the code and the full parts list).
+- **You decode it the same place:** open the builder, paste the code into
+  "Have a code?", and every part snaps to exactly what the customer chose.
+  Codes also work as links — `builder.html#AH-34232-52334` opens preloaded.
+- The checksum catches typos: a mistyped character is rejected with a message
+  instead of silently loading the wrong build.
+- Adding parts later? Append options to the END of a category's list in
+  `js/builder.js` (never reorder existing ones) and old codes stay valid.
 
 ## How it works
 
