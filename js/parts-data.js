@@ -63,9 +63,10 @@ var LAYERS = {
 var PARTS = {
 
   case: [
-    { id: "case-oct-rose",    name: "Octagon · rose gold", vendor: "ACHUTA stock", url: "",
-      tags: ["Octagon", "Rose gold"], img: "parts/case-oct-rose.png",
-      note: "Octagonal bezel · 8 screws" },
+    { id: "case-royal-oak-rose",    name: "Royal Oak · rose gold", vendor: "nomods", url: "",
+      tags: ["Royal Oak", "Rose gold"], img: "parts/case-royal-oak-rose.png",
+      note: "Octagonal bezel · 37mm lug-to-lug",
+      accepts: { mov_brand: {text: "nh"}, bracelet: {text: "royal-oak"} } },
     { id: "case-oct-steel",   name: "Octagon · steel", vendor: "ACHUTA stock", url: "",
       tags: ["Octagon", "Steel"], img: "parts/case-oct-steel.png",
       note: "Octagonal bezel · 8 screws" },
@@ -83,19 +84,23 @@ var PARTS = {
     { id: "mov-nh35", name: "Seiko NH35", vendor: "Seiko · TMI", url: "",
       tags: ["Date", "Hacking"], img: "parts/mov-nh35.png",
       windows: ["date"], bps: 6,
-      spec: "Automatic · date · 21,600 vph · sweeping seconds" },
+      spec: "Automatic · date · 21,600 vph · sweeping seconds", 
+      specs: { mov_brand: "nh" } },
     { id: "mov-nh36", name: "Seiko NH36", vendor: "Seiko · TMI", url: "",
       tags: ["Day-date", "Hacking"], img: "parts/mov-nh36.png",
       windows: ["daydate"], bps: 6,
-      spec: "Automatic · day-date · 21,600 vph · sweeping seconds" },
+      spec: "Automatic · day-date · 21,600 vph · sweeping seconds",
+      specs: { mov_brand: "nh" } },
     { id: "mov-nh38", name: "Seiko NH38", vendor: "Seiko · TMI", url: "",
       tags: ["No date", "Hacking"], img: "parts/mov-nh38.png",
       windows: [], bps: 6,
-      spec: "Automatic · no date · clean dial · sweeping seconds" },
+      spec: "Automatic · no date · clean dial · sweeping seconds",
+      specs: { mov_brand: "nh" } },
     { id: "mov-nh34", name: "Seiko NH34 GMT", vendor: "Seiko · TMI", url: "",
       tags: ["GMT", "Date"], img: "parts/mov-nh34.png",
       windows: ["date", "gmt"], bps: 6,
-      spec: "Automatic · true GMT · date · sweeping seconds" }
+      spec: "Automatic · true GMT · date · sweeping seconds",
+      specs: { mov_brand: "nh" } }
   ],
 
   dial: [
@@ -110,7 +115,9 @@ var PARTS = {
     { id: "dial-fume",   name: "Charcoal fumé", vendor: "ACHUTA stock", url: "",
       tags: ["Dark", "Sunburst"], img: "parts/dial-fume.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
     { id: "dial-ivory",  name: "Ivory matte", vendor: "ACHUTA stock", url: "",
-      tags: ["Light", "Matte"], img: "parts/dial-ivory.png", note: "ø 31 mm", specs: { dial_mm: 31 } }
+      tags: ["Light", "Matte"], img: "parts/dial-ivory.png", note: "ø 31 mm", specs: { dial_mm: 31 } },
+    { id: "dial-openheart-hammered-green",  name: "Open heart Hammered Pattern - Green", vendor: "dialmaker.shop", url: "",
+      tags: ["Open Heart", "Textured"], img: "parts/dial-openheart-hammered-green.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } }
   ],
 
   handset: [
@@ -164,7 +171,8 @@ var PARTS = {
 
   band: [
     { id: "band-bracelet-rose",  name: "Bracelet · rose gold", vendor: "ACHUTA stock", url: "",
-      tags: ["Bracelet", "Rose gold"], img: "parts/band-bracelet-rose.png" },
+      tags: ["Bracelet", "Rose gold"], img: "parts/band-bracelet-royaloak-rose.png", 
+      specs: {bracelet: "royal-oak"} },
     { id: "band-bracelet-steel", name: "Bracelet · steel", vendor: "ACHUTA stock", url: "",
       tags: ["Bracelet", "Steel"], img: "parts/band-bracelet-steel.png" },
     { id: "band-bracelet-gold",  name: "Bracelet · yellow gold", vendor: "ACHUTA stock", url: "",
