@@ -20,6 +20,8 @@ host also works (`npx serve`, nginx, Netlify, Vercel, GitHub Pages…). No build
 index.html          landing page — structure + copy
 builder.html        Build-your-own configurator (stacked part layers + build codes)
 faq.html            FAQ page — accordion answers, deep-linkable (faq.html#q-how)
+gallery.html        Commissions gallery — photos paired with loadable build codes
+gallery/            commission photos
 css/style.css       design system (void black / rose gold, Cormorant Garamond + Jost)
 css/builder.css     builder layout, part cards, greyed states, sweep animation
 js/app.js           landing-page scroll engine — no libraries
@@ -66,6 +68,24 @@ Every configuration produces a **build code** like `AH-5222-222B`:
   are rejected by the checksum instead of loading the wrong build.
 - Codes are versioned: codes issued before you add parts or whole
   categories keep loading forever (see HISTORY in `js/builder.js`).
+
+### Gallery, saved builds & the mobile summary bar
+
+- **Commissions gallery** (`gallery.html`): each card pairs a photo in
+  `/gallery` with its real build code — "Load this build" is just a
+  link to `builder.html#CODE`. To add one, duplicate an `<article>`
+  block and paste the commission's code into the visible line AND the
+  link's hash. Composites of catalogue parts work as photos until you
+  shoot the real watch.
+- **My builds**: clients can save up to 8 builds per browser
+  (localStorage, no accounts). Rows show name, code, date, and the
+  price at TODAY's numbers. Saving the same code twice keeps one entry.
+- **Mobile summary bar**: below 980px, a pinned strip with a live
+  mini-preview and the running total appears whenever the big preview
+  scrolls out of view; "Preview ↑" jumps back. It never renders on
+  desktop.
+- Build-code links now also react to hash changes, so flipping between
+  gallery links without a reload swaps the build live.
 
 ### Adding a new page (About, Journal, Contact, …)
 

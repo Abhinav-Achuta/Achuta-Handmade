@@ -178,6 +178,7 @@
     img.src = p.img;
     img.style.zIndex = z(catKey, p);
   }
+  var MINI = null;   /* mirror imgs for the mobile mini-bar, built at init */
   function applyPreview() {
     setLayer("ly-case", "case");
     setLayer("ly-band", "band");
@@ -198,6 +199,18 @@
       var img = document.getElementById("ly-ovl" + (i + 1));
       if (ovls[i]) { img.src = ovls[i].src; img.style.zIndex = ovls[i].z; img.style.display = ""; }
       else { img.removeAttribute("src"); img.style.display = "none"; }
+    });
+
+    /* mirror every layer into the mobile mini-bar */
+    if (MINI) ["ly-case", "ly-band", "ly-mov", "ly-dial", "ly-ovl1", "ly-ovl2", "ly-hands", "ly-sec"].forEach(function (id) {
+      var srcEl = document.getElementById(id), m = MINI[id];
+      if (!m) return;
+      if (srcEl.getAttribute("src") && srcEl.style.display !== "none") {
+        m.src = srcEl.src;
+        m.style.display = "";
+        m.style.zIndex = srcEl.style.zIndex || getComputedStyle(srcEl.parentElement === m.parentElement ? srcEl : srcEl).zIndex;
+        if (id !== "ly-sec") m.style.zIndex = srcEl.style.zIndex;
+      } else { m.removeAttribute("src"); m.style.display = "none"; }
     });
 
     /* beat rate follows the movement (NH3x = 6 beats/sec) */
@@ -281,6 +294,8 @@
     CATS.forEach(function (c) { total += priceOf(c.id); });
     var totalEl = document.getElementById("est-total");
     if (totalEl) totalEl.textContent = fmtPrice(total);
+    var mt = document.getElementById("mini-total");
+    if (mt) mt.textContent = fmtPrice(total);
     var noteEl = document.getElementById("est-note");
     if (noteEl && typeof PRICING !== "undefined") noteEl.textContent = PRICING.note;
 
@@ -480,10 +495,115 @@
       var r = decode(location.hash.slice(1));
       if (r.state) state = r.state;
     }
+    window.addEventListener("hashchange", function () {
+      if (location.hash.length > 4) {
+        var r = decode(location.hash.slice(1));
+        if (r.state) { state = r.state; apply(); }
+      }
+    });
+  }
+
+  /* ── mobile mini-bar ─────────────────────────────── */
+  function initMiniBar() {
+    var bar = document.getElementById("mini-bar");
+    var host = document.getElementById("mini-stack");
+    if (!bar || !host) return;
+    MINI = {};
+    ["ly-band", "ly-mov", "ly-dial", "ly-ovl1", "ly-ovl2", "ly-hands", "ly-sec", "ly-case"].forEach(function (id) {
+      var img = document.createElement("img");
+      img.className = "mini-layer" + (id === "ly-sec" ? " mini-sec" : "");
+      img.alt = "";
+      host.appendChild(img);
+      MINI[id] = img;
+    });
+    bar.hidden = false;
+    var stage = document.querySelector(".stage");
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { bar.classList.toggle("on", !e.isIntersecting); });
+    }, { threshold: 0.05 });
+    io.observe(stage);
+    document.getElementById("mini-view").addEventListener("click", function () {
+      stage.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  /* ── my builds (this browser) ────────────────────── */
+  var SAVE_KEY = "achuta-builds-v1";
+  function storageOK() {
+    try { localStorage.setItem("__t", "1"); localStorage.removeItem("__t"); return true; }
+    catch (e) { return false; }
+  }
+  function getSaved() {
+    try { return JSON.parse(localStorage.getItem(SAVE_KEY) || "[]"); } catch (e) { return []; }
+  }
+  function priceForState(s) {
+    var t = 0;
+    CATS.forEach(function (c) {
+      var p = PARTS[c.id][s[c.id]];
+      if (p && !p.matchesHandset) t += p.price || 0;
+    });
+    return t;
+  }
+  function renderSaved() {
+    var list = document.getElementById("saved-list");
+    var empty = document.getElementById("saved-empty");
+    if (!list) return;
+    var builds = getSaved();
+    list.innerHTML = "";
+    empty.style.display = builds.length ? "none" : "";
+    builds.forEach(function (bld) {
+      var r = decode(bld.code);
+      var row = document.createElement("div");
+      row.className = "saved-row";
+      var when = new Date(bld.ts).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+      var price = r.state ? fmtPrice(priceForState(r.state)) : "—";
+      row.innerHTML =
+        '<span class="saved-name">' + bld.name + '</span>' +
+        '<span class="saved-meta">' + bld.code + " · " + when + " · " + price + "</span>" +
+        '<span class="saved-actions">' +
+        '<button type="button" class="btn btn--ghost saved-load">Load</button>' +
+        '<button type="button" class="saved-del" aria-label="Delete ' + bld.name + '">✕</button></span>';
+      row.querySelector(".saved-load").addEventListener("click", function () {
+        var res = decode(bld.code);
+        if (res.state) {
+          state = res.state; apply();
+          var msg = document.getElementById("load-msg");
+          msg.textContent = "“" + bld.name + "” loaded.";
+          msg.className = "load-msg ok";
+        }
+      });
+      row.querySelector(".saved-del").addEventListener("click", function () {
+        persistSaved(getSaved().filter(function (x) { return x.code !== bld.code; }));
+      });
+      list.appendChild(row);
+    });
+  }
+  function persistSaved(builds) {
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify(builds)); } catch (e) {}
+    renderSaved();
+  }
+  function initSaved() {
+    var box = document.getElementById("saved-box");
+    var btn = document.getElementById("save-build");
+    if (!box || !btn) return;
+    if (!storageOK()) { box.style.display = "none"; btn.style.display = "none"; return; }
+    btn.addEventListener("click", function () {
+      var code = encode(state);
+      var name = part("case").name + " · " + part("dial").name;
+      var builds = getSaved().filter(function (x) { return x.code !== code; });
+      builds.unshift({ code: code, name: name, ts: Date.now() });
+      persistSaved(builds.slice(0, 8));
+      var note = document.getElementById("copied-note");
+      note.textContent = "Saved — " + name;
+      setTimeout(function () { if (note.textContent.indexOf("Saved") === 0) note.textContent = ""; }, 3200);
+    });
+    renderSaved();
   }
 
   buildUI();
   initActions();
+  initMiniBar();
+  initSaved();
   syncSweep();
   apply();
   lintRules();

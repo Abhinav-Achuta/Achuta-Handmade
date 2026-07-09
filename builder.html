@@ -17,9 +17,20 @@
   <a class="head-mark" href="index.html">ACHUTA</a>
   <nav class="head-nav">
     <a class="head-link" href="index.html">The story</a>
+    <a class="head-link" href="builder.html" aria-current="page">Commission</a>
     <a class="head-link" href="faq.html">FAQ</a>
+    <a class="head-link" href="gallery.html">Gallery</a>
   </nav>
 </header>
+
+<div class="mini-bar" id="mini-bar" hidden>
+  <div class="mini-stack" id="mini-stack" aria-hidden="true"></div>
+  <div class="mini-info">
+    <span class="mini-label">Estimated total</span>
+    <span class="mini-total" id="mini-total">—</span>
+  </div>
+  <button class="mini-view" id="mini-view" type="button">Preview&nbsp;↑</button>
+</div>
 
 <main class="builder">
 
@@ -63,6 +74,7 @@
       <p class="code-hint">This code is your exact configuration. Send it with your commission — we assemble precisely what it describes.</p>
       <div class="code-actions">
         <button class="btn btn--ghost" id="copy-code" type="button">Copy code</button>
+        <button class="btn btn--ghost" id="save-build" type="button">Save build</button>
         <a class="btn btn--gold" id="send-commission" href="#">Send commission</a>
       </div>
       <p class="copied" id="copied-note" aria-live="polite"></p>
@@ -77,6 +89,13 @@
         <button class="btn btn--ghost" id="load-code" type="button">Load</button>
       </div>
       <p class="load-msg" id="load-msg" aria-live="polite"></p>
+    </div>
+
+    <!-- my builds (this browser) -->
+    <div class="saved-box" id="saved-box">
+      <p class="eyebrow">My builds</p>
+      <div class="saved-list" id="saved-list"></div>
+      <p class="saved-empty" id="saved-empty">Saved builds live in this browser — press “Save build” above to keep one.</p>
     </div>
 
     <footer class="builder-foot">
