@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ═══════════════════════════════════════════════════════════════
+     NEW PAGE TEMPLATE — how to use
+     1. Copy this file to the SITE ROOT (next to index.html) and
+        rename it, e.g. journal.html. It will not work from /tools.
+     2. Edit the <title> and meta description below.
+     3. Replace the example content in <main>.
+     4. Add your page to the header nav on EVERY page so navigation
+        stays consistent — one line each in index.html, builder.html,
+        faq.html (inside <nav class="head-nav">), and update the nav
+        below so this page links back to the others:
+           <a class="head-link" href="journal.html">Journal</a>
+     5. Styling: css/style.css gives you the design tokens
+        (--void, --bone, --gold, --serif, --sans) and shared classes
+        (.eyebrow, .display, .site-head). Page-specific styles live in
+        the <style> block below — move them to css/yourpage.css if
+        they grow. Keep the tone: prose over boxes, hairlines over
+        borders, gold sparingly.
+     Note: the landing page's header fades in on scroll (js/app.js
+     does that); every other page shows it immediately via the
+     class="site-head on" used below. Don't include js/app.js here —
+     it is landing-specific.
+     ═══════════════════════════════════════════════════════════════ -->
+
+<title>Page title — ACHUTA HANDMADE</title>
+<meta name="description" content="One quiet sentence describing this page.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+/* page-specific styles — self-contained so this file stands alone */
+.page{ padding:clamp(9rem,18vh,13rem) clamp(1.6rem,6vw,4rem) 4rem; background:var(--void); }
+.page-inner{ max-width:840px; margin:0 auto; }
+.page .display{ margin:1.6rem 0 1rem; }
+.page-sub{ font-family:var(--serif); font-style:italic; font-size:1.1rem; color:var(--bone-4); margin-bottom:3.5rem; }
+.page p.body-copy{ font-size:.95rem; line-height:1.95; letter-spacing:.02em; color:var(--bone-6); max-width:62ch; margin-bottom:1.6rem; }
+.page h2{ font-family:var(--serif); font-weight:400; font-size:clamp(1.4rem,2.6vw,1.8rem); margin:3rem 0 1.2rem; }
+.page .btn{
+  appearance:none; cursor:pointer; display:inline-block;
+  font-family:var(--sans); font-weight:400;
+  font-size:.62rem; letter-spacing:.38em; text-indent:.38em; text-transform:uppercase;
+  padding:1.05rem 1.9rem 1rem; border:none;
+  transition:background .4s ease, color .4s ease, border-color .4s ease;
+}
+.page .btn--gold{ background:var(--gold); color:var(--void); }
+.page .btn--gold:hover{ background:var(--bone); }
+.page .btn--ghost{ background:transparent; color:var(--bone-6); border:1px solid rgba(234,227,214,.22); }
+.page .btn--ghost:hover{ border-color:var(--gold); color:var(--bone); }
+.page-foot{
+  margin-top:5.5rem; padding-top:1.8rem;
+  border-top:1px solid rgba(234,227,214,.08);
+  display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap;
+  font-size:.58rem; letter-spacing:.28em; text-transform:uppercase; color:var(--bone-4);
+}
+.page-foot a{ color:var(--bone-6); transition:color .35s ease; }
+.page-foot a:hover{ color:var(--gold); }
+</style>
+</head>
+<body>
+
+<header class="site-head on">
+  <a class="head-mark" href="index.html">ACHUTA</a>
+  <nav class="head-nav">
+    <a class="head-link" href="index.html">The story</a>
+    <a class="head-link" href="faq.html">FAQ</a>
+    <a class="head-link" href="builder.html">Commission</a>
+  </nav>
+</header>
+
+<main class="page">
+  <div class="page-inner">
+
+    <p class="eyebrow">Section label</p>
+    <h1 class="display">Page title,<br><em>quietly said.</em></h1>
+    <p class="page-sub">One italic line that frames the page.</p>
+
+    <p class="body-copy">Replace this with your content. Body copy is
+    small, generously line-spaced, and never wider than a comfortable
+    read. Keep sentences short. Let the space do the talking.</p>
+
+    <h2>A section heading</h2>
+    <p class="body-copy">More prose. If you need structure, prefer a
+    serif heading and a hairline over cards and boxes.</p>
+
+    <p style="margin-top:3rem;">
+      <a class="btn btn--gold" href="builder.html">Build your own</a>
+    </p>
+
+    <footer class="page-foot">
+      <a href="index.html">← Back to the story</a>
+      <span>© 2026 ACHUTA HANDMADE</span>
+    </footer>
+
+  </div>
+</main>
+
+</body>
+</html>

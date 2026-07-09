@@ -19,11 +19,14 @@ host also works (`npx serve`, nginx, Netlify, Vercel, GitHub Pages…). No build
 ```
 index.html          landing page — structure + copy
 builder.html        Build-your-own configurator (stacked part layers + build codes)
+faq.html            FAQ page — accordion answers, deep-linkable (faq.html#q-how)
 css/style.css       design system (void black / rose gold, Cormorant Garamond + Jost)
 css/builder.css     builder layout, part cards, greyed states, sweep animation
 js/app.js           landing-page scroll engine — no libraries
 js/parts-data.js    THE PARTS CATALOGUE — parts, vendors, tags, compatibility rules
 js/builder.js       builder engine — layers, filters, greying, build codes
+js/faq.js           FAQ accordions
+css/faq.css         FAQ page styles
 parts/              one transparent PNG layer per part (840×1120, shared canvas)
 seq/hero|macro|expl 193 frames per film clip for the scroll-scrub sections
 tools/gen_parts.html          regenerates the in-house part artwork
@@ -63,6 +66,20 @@ Every configuration produces a **build code** like `AH-5222-222B`:
   are rejected by the checksum instead of loading the wrong build.
 - Codes are versioned: codes issued before you add parts or whole
   categories keep loading forever (see HISTORY in `js/builder.js`).
+
+### Adding a new page (About, Journal, Contact, …)
+
+Copy `tools/page-template.html` into the site root, rename it
+(e.g. `about.html`), and follow the numbered comments inside — it
+already carries the shared header, footer, fonts, and design tokens.
+The one integration rule: when a page is added, put its nav link into
+`<nav class="head-nav">` on EVERY page (index.html, builder.html,
+faq.html, and the new page itself) so navigation stays consistent
+everywhere. Two quirks worth knowing: the landing page's header fades
+in on scroll (js/app.js adds the `on` class), while every other page
+hardcodes `class="site-head on"`; and js/app.js is landing-only —
+never include it on other pages. The FAQ page is a finished example of
+the pattern, including how to add a small page script (js/faq.js).
 
 ### Layer order — deciding what sits on top
 
@@ -216,7 +233,10 @@ regenerates them if you tweak the artwork.
 
 ## Easy edits
 
-- **Copy** — all text lives in `index.html`.
+- **Copy** — landing text lives in `index.html`; FAQ questions and
+  answers are plain HTML blocks in `faq.html` (copy a `.q` block to add
+  one; answers are DRAFTS — edit timelines/warranty wording to match
+  your actual policies).
 - **Overlay timing** — each overlay has `data-show="in-start,in-end,out-start,out-end"`
   as fractions of that section's scroll (e.g. `0.34,0.46,0.60,0.72`).
 - **Scroll length per clip** — the `#hero / #macro / #build` heights in `css/style.css`
