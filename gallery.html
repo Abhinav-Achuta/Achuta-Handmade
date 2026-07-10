@@ -14,12 +14,15 @@
 <body>
 
 <header class="site-head on">
-  <a class="head-mark" href="index.html">ACHUTA</a>
+  <a class="head-mark" href="index.html">ACHUTA<span class="head-mark-sub">HANDMADE</span></a>
   <nav class="head-nav">
     <a class="head-link" href="index.html">The story</a>
     <a class="head-link" href="builder.html">Commission</a>
-    <a class="head-link" href="faq.html">FAQ</a>
-    <a class="head-link" href="gallery.html" aria-current="page">Gallery</a>
+    <button class="nav-more" type="button" aria-expanded="false" aria-controls="nav-extra">Menu</button>
+    <div class="nav-extra" id="nav-extra">
+      <a class="head-link" href="faq.html">FAQ</a>
+      <a class="head-link" href="gallery.html" aria-current="page">Gallery</a>
+    </div>
   </nav>
 </header>
 
@@ -90,5 +93,6 @@
   </div>
 </main>
 
+<script src="js/nav.js"></script>
 </body>
 </html>

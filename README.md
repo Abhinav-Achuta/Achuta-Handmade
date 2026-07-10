@@ -1,264 +1,286 @@
-# ACHUTA HANDMADE — cinematic scroll site
+# ACHUTA HANDMADE — owner's manual
 
-## Run it
+Everything on this site is plain HTML/CSS/JS — no build step, no
+frameworks, no database. Edit a file, refresh the browser, done.
+This manual covers every feature and exactly which file to open to
+change it.
 
-Frame sequences load over HTTP, so serve the folder (don't open index.html directly):
+─────────────────────────────────────────────────────────────────────
 
-```
-cd achuta-handmade-site
-python3 -m http.server 8080
-```
+## 1 · Running the site
 
-Then open **http://localhost:8080**. To test on your phone, find your
-computer's local IP (`ipconfig getifaddr en0` on Mac, `ipconfig` on
-Windows) and open `http://THAT-IP:8080` on the same Wi-Fi. Any static
-host also works (`npx serve`, nginx, Netlify, Vercel, GitHub Pages…). No build step, no dependencies.
-
-## What's inside
+Frame sequences and part images load over HTTP, so serve the folder
+(don't double-click index.html):
 
 ```
-index.html          landing page — structure + copy
-builder.html        Build-your-own configurator (stacked part layers + build codes)
-faq.html            FAQ page — accordion answers, deep-linkable (faq.html#q-how)
-gallery.html        Commissions gallery — photos paired with loadable build codes
-gallery/            commission photos
-css/style.css       design system (void black / rose gold, Cormorant Garamond + Jost)
-css/builder.css     builder layout, part cards, greyed states, sweep animation
-js/app.js           landing-page scroll engine — no libraries
-js/parts-data.js    THE PARTS CATALOGUE — parts, vendors, tags, compatibility rules
-js/builder.js       builder engine — layers, filters, greying, build codes
-js/faq.js           FAQ accordions
-css/faq.css         FAQ page styles
-parts/              one transparent PNG layer per part (840×1120, shared canvas)
-seq/hero|macro|expl 193 frames per film clip for the scroll-scrub sections
-tools/gen_parts.html          regenerates the in-house part artwork
-tools/alignment-template.png  guide overlay for positioning YOUR part photos
+cd Achuta-Handmade-main
+python3 -m http.server 8080          → open http://localhost:8080
 ```
 
-## The builder & build codes
+**Test on your phone:** find your computer's local IP
+(`ipconfig getifaddr en0` on Mac, `ipconfig` on Windows) and open
+`http://THAT-IP:8080` on the same Wi-Fi.
 
-`builder.html` (linked from the Build your own CTA and the header) is a
-parts-catalogue configurator: clients click real parts — case, band/bracelet,
-movement, dial, handset, sweeping seconds hand, date wheel — and each choice swaps a transparent
-image layer in the live stacked preview. Filter chips above each category
-narrow parts by tags (Octagon / Round, Warm / Dark, Baton / Sword, …),
-and each category collapses behind the small triangle in its header —
-the current pick stays visible while collapsed.
-Handsets ship with a matching seconds hand: the "Included with
-handset" option (the default) renders whichever hand matches the chosen
-handset and follows it live — picking any other seconds hand is the
-upgrade path, declared per handset via `includedSeconds` in
-`parts-data.js`. Movements drive compatibility automatically: NH35 adds a date window,
-NH36 a day-date, NH38 removes the window, NH34 adds a GMT hand — and
-the window renders in the client's chosen date-wheel colour. The seconds hand sweeps like the real movement: six 1-degree
-micro-beats per second (21,600 vph), synced to the actual clock so it
-reads the true time — a movement entry can set `bps` to change the beat
-rate (e.g. 8 for a 28,800 vph calibre). Disabled under
-prefers-reduced-motion.
+**Deploy:** any static host works as-is — Netlify (drag the folder
+onto app.netlify.com/drop), Vercel, GitHub Pages, nginx.
 
-Every configuration produces a **build code** like `AH-5222-222B`:
+## 2 · What's in the folder
 
-- One character per part plus a version marker and a checksum, from an
-  unambiguous alphabet (no 0/O, 1/I/L, or U).
-- Clients hit **Copy code** or **Send commission** (a prefilled email with
-  the code and the parts list including vendors).
-- **You decode it in the same place:** paste the code into "Have a code?"
-  and every part snaps to exactly what the customer chose. Codes work as
-  links too — `builder.html#AH-5222-222B` opens preloaded. Mistyped codes
-  are rejected by the checksum instead of loading the wrong build.
-- Codes are versioned: codes issued before you add parts or whole
-  categories keep loading forever (see HISTORY in `js/builder.js`).
+```
+index.html        landing page (cinematic scroll)
+builder.html      Build-your-own configurator
+faq.html          FAQ (accordions, deep-linkable)
+gallery.html      Gallery of commissions with loadable build codes
 
-### Gallery, saved builds & the mobile summary bar
+css/style.css     design tokens + shared header/nav (ALL pages load this)
+css/builder.css   configurator styles, cards, mini-bar, sweep
+css/faq.css       FAQ styles
+css/gallery.css   gallery styles
 
-- **Commissions gallery** (`gallery.html`): each card pairs a photo in
-  `/gallery` with its real build code — "Load this build" is just a
-  link to `builder.html#CODE`. To add one, duplicate an `<article>`
-  block and paste the commission's code into the visible line AND the
-  link's hash. Composites of catalogue parts work as photos until you
-  shoot the real watch.
-- **My builds**: clients can save up to 8 builds per browser
-  (localStorage, no accounts). Rows show name, code, date, and the
-  price at TODAY's numbers. Saving the same code twice keeps one entry.
-- **Mobile summary bar**: below 980px, a pinned strip with a live
-  mini-preview and the running total appears whenever the big preview
-  scrolls out of view; "Preview ↑" jumps back. It never renders on
-  desktop.
-- Build-code links now also react to hash changes, so flipping between
-  gallery links without a reload swaps the build live.
+js/app.js         landing scroll engine  — LANDING PAGE ONLY
+js/nav.js         mobile menu            — every page
+js/parts-data.js  ★ THE CATALOGUE — parts, prices, rules, layers
+js/builder.js     configurator engine (rarely needs editing)
+js/faq.js         FAQ accordions
 
-### Adding a new page (About, Journal, Contact, …)
+parts/            one transparent PNG per part (840×1120 shared canvas)
+gallery/          commission photos
+seq/hero|macro|expl   193 frames per film clip (landing scrub)
+tools/gen_parts.html          regenerates the drawn part artwork
+tools/alignment-template.png  guide overlay for positioning YOUR photos
+tools/page-template.html      copy this to create a new page
+```
 
-Copy `tools/page-template.html` into the site root, rename it
-(e.g. `about.html`), and follow the numbered comments inside — it
-already carries the shared header, footer, fonts, and design tokens.
-The one integration rule: when a page is added, put its nav link into
-`<nav class="head-nav">` on EVERY page (index.html, builder.html,
-faq.html, and the new page itself) so navigation stays consistent
-everywhere. Two quirks worth knowing: the landing page's header fades
-in on scroll (js/app.js adds the `on` class), while every other page
-hardcodes `class="site-head on"`; and js/app.js is landing-only —
-never include it on other pages. The FAQ page is a finished example of
-the pattern, including how to add a small page script (js/faq.js).
+★ = the file you'll edit most. Its top comment repeats the key rules.
 
-### Layer order — deciding what sits on top
+## 3 · The golden rules (read these twice)
 
-The stacking order of every image is one map at the top of
-`js/parts-data.js`:
+1. **APPEND, never reorder or delete** — parts within a category,
+   categories within HISTORY. Build codes store positions; reordering
+   makes old customer codes point at the wrong parts. Retiring a part?
+   Leave its entry in place (you can stop linking its image later).
+2. **ids are forever.** Part `id`s are referenced by whitelists and by
+   you; don't rename one once codes exist.
+3. **After editing rules, open the browser console** on the builder —
+   misconfigured rules print plain-language warnings there.
+
+─────────────────────────────────────────────────────────────────────
+
+## 4 · Landing page (index.html)
+
+Three film clips were pre-extracted to WebP frames; scrolling scrubs
+them on canvas with Lenis-style smoothing (js/app.js, no libraries).
+
+- **Copy** — all text is in `index.html`.
+- **Overlay timing** — every pinned caption has
+  `data-show="in-start,in-end,out-start,out-end"` as fractions of that
+  section's scroll (e.g. `0.34,0.46,0.60,0.72`).
+- **Scrub speed** — the `#hero / #macro / #build` heights in
+  `css/style.css` (380vh / 380vh / 430vh). Taller = slower.
+- **Swapping a film clip** — extract new frames over the old ones:
+  `ffmpeg -i NEW.mp4 -vf "scale=1600:-2" -c:v libwebp -q:v 80
+  seq/macro/f_%04d.webp` (193 frames expected; if the count differs,
+  update `count` in SEQS at the top of js/app.js).
+- The landing header fades in on scroll (app.js adds class `on`);
+  every other page hardcodes `class="site-head on"`. **Never include
+  js/app.js on other pages.**
+
+## 5 · Header & navigation (all pages)
+
+- **Wordmark** is a two-line lockup — ACHUTA over HANDMADE (gold).
+  Styles under "two-line wordmark" in css/style.css; the HANDMADE
+  letter-spacing is tuned so both lines are the same width.
+- **Tab order** everywhere: The story/About · Commission · FAQ ·
+  Gallery, with `aria-current="page"` on the current page.
+- **Mobile (≤760px):** only the first two tabs show; FAQ + Gallery live
+  behind the Menu button (js/nav.js — closes on outside tap, Escape,
+  or choosing a link). Desktop is untouched.
+- **Adding a tab:** add the link inside `<nav class="head-nav">` on
+  EVERY page. Put it before the `<button class="nav-more">` to keep it
+  always visible on mobile, or inside `<div class="nav-extra">` to put
+  it in the mobile menu.
+
+## 6 · FAQ (faq.html)
+
+Questions are plain HTML — duplicate a `.q` block to add one. Give it
+an `id` to make it deep-linkable (`faq.html#q-how` opens + scrolls to
+it, also on hash changes). Answers are DRAFTS — especially confirm the
+timeline ("two to four weeks") and warranty wording.
+
+## 7 · Gallery (gallery.html)
+
+Each card = a photo in `/gallery` + the commission's real build code.
+"Load this build" is just a link to `builder.html#CODE`. To add one:
+duplicate an `<article>`, drop the photo in `/gallery`, and paste the
+code into BOTH the visible line and the link's hash. Until you shoot
+the real watch, a composite of catalogue parts works (the three
+shipped photos were made that way).
+
+## 8 · Adding a whole new page
+
+Copy `tools/page-template.html` to the SITE ROOT, rename it, and
+follow the numbered comments inside. It already carries the header,
+footer, fonts, tokens, and mobile menu. Then add its nav link on every
+page (rule in §5). The FAQ is a finished example of the pattern.
+
+─────────────────────────────────────────────────────────────────────
+
+## 9 · THE CONFIGURATOR
+
+### 9.1 How it works in one paragraph
+
+Seven categories (case, band, movement, dial, handset, seconds hand,
+date wheel). Every part is a transparent PNG layer on a shared 840×1120
+canvas; the preview stacks the selected layers in z-order. Everything —
+parts, prices, rules, layer order — lives in **js/parts-data.js**.
+The engine (js/builder.js) reads it; you almost never edit the engine.
+
+### 9.2 A part entry, every field explained
 
 ```js
-var LAYERS = { band: 10, movement: 20, dial: 30, window: 40,
-               gmt: 45, handset: 50, seconds: 60, case: 70 };
+{ id: "case-royal-oak-rose",        // permanent — never rename
+  name: "Royal Oak · rose gold",    // shown on the card
+  vendor: "nomods", url: "",        // shown on card + commission email
+  price: 105,                       // card chip + running total; 0 = "Included"; omit = no chip
+  tags: ["Royal Oak", "Rose gold"], // become the filter chips
+  img: "parts/case-royal-oak-rose.png",
+  note: "Octagonal bezel",          // small line on the card (optional)
+
+  // colour variants (optional):
+  group: "royal-oak",               // same group ⇒ ONE card with colour dots
+  swatch: "#c98a5f",                // this variant's dot colour
+
+  // compatibility (optional — see 9.5):
+  specs:    { dial_mm: 28.5 },              // facts about THIS part
+  accepts:  { dial_mm: { max: 28.5 } },     // limits it puts on others
+  compatible:   { band: ["band-x-id"] },    // whitelist per category
+  incompatible: { seconds: ["sec-x-id"] },  // blacklist per category
+
+  layer: 90 }                       // optional per-part z-order override
 ```
 
-Higher number = closer to the viewer. Edit these numbers freely — cases
-sit on top by default so the bezel overlaps the dial edge like a real
-watch (case PNGs have a transparent dial aperture punched through), the
-movement sits at the bottom where it shows through any future skeleton
-or cutout dial, and bands sit under everything. Any INDIVIDUAL part can
-override its category with its own `layer: <number>` field — e.g. a
-domed-crystal part at `layer: 90` to sit above the case. Bands and
-cases are separate categories, so any strap pairs with any case.
+Category-specific extras: **movements** have `windows: ["date"]` /
+`["daydate"]` / `[]` / `["date","gmt"]` (which aperture/hand overlays
+they add), `bps: 6` (sweep beats per second — 8 for a 28,800 vph
+calibre), and `spec:` (the line under the preview). **Handsets** have
+`includedSeconds: "parts/….png"` — the hand their kit ships with.
+**Date wheels** have `imgs: { date, daydate }` (their window images).
+The special seconds part with `matchesHandset: true` renders the
+selected handset's included hand; `featured: true` floats any part to
+the front of its grid WITHOUT changing its code index.
 
-Note: build codes issued before the band category existed (v2/v3) load
-with the default band, since bands weren't encoded back then.
+### 9.3 Adding / replacing part images
 
-### Adding a whole new category (worked example: Date wheel)
+- **Replace:** overwrite the PNG in `/parts` with the same filename.
+- **Add:** transparent PNG on the 840×1120 canvas, then APPEND one
+  entry to the category in parts-data.js. Lay
+  `tools/alignment-template.png` over your editor canvas as a guide:
+  watch centre exactly 50%/50%, dial ø ≈ 38% of canvas width.
+  Cases include bezel + crown with the DIAL AREA TRANSPARENT (cases
+  render on top); bands are separate; dials include their indices;
+  handsets pose at 10:08; **seconds hands point straight up at 12**
+  (the layer rotates live to sweep). Card thumbnails auto-crop — the
+  per-category zoom lives in css/builder.css (.t-case, .t-dial, …).
+- The drawn stand-in parts can be regenerated from
+  tools/gen_parts.html (see comments in that file).
 
-Adding parts to an existing category is append-only in `parts-data.js`.
-Adding a NEW category takes four small steps (the date-wheel category in
-the shipped files is the worked example to copy):
+### 9.4 Colour variants — worked example
 
-1. `js/parts-data.js` — append the new category list at the bottom with
-   its parts (image, vendor, tags, and any specs/rules).
-2. `js/builder.js` — append one line to `CATS` (id, display name, thumb
-   class) and add `yourcat: 0` to the initial `state` and `filters`.
-3. `js/builder.js` — copy the last line of `HISTORY`, add the new
-   category id at the END, and bump `VERSION`. This is what keeps every
-   previously issued build code loading: old codes decode against their
-   own version's category order, and the new category defaults to its
-   first part.
-4. If the category is a new visual layer, add an `<img>` to the stack in
-   `builder.html` and set its `src` in `applyPreview()`; give its card
-   thumbnail a zoom class in `css/builder.css` if needed. (The date
-   wheel instead plugs into the movement's window system — movements
-   declare window TYPES and the wheel supplies the images.)
+Live example: the two `royal-oak` case entries. Two edits: add
+`group: "royal-oak", swatch: "#c98a5f"` to the existing colour, then
+APPEND the new colourway at the END of the list with the same group
+and its own swatch/image/price. They collapse into one card with
+colour dots; each colour keeps its own code index and may carry its
+own rules. Incompatible colours grey per-dot. Quick stand-in image: a
+luminance remap of the existing colour's PNG (the steel Royal Oak was
+made that way).
 
-Rule of thumb: everything is append-only — parts within a category,
-categories within HISTORY — and codes survive any addition.
+### 9.5 Compatibility (greying parts out)
 
-### Prices & the running estimate
+Two styles, both written on the parts:
 
-Give any part a `price:` in `js/parts-data.js` and it appears as a chip
-on the card and joins the "Estimated parts total" above the build code,
-which recomputes on every selection and rides along in the commission
-email. `price: 0` displays as "Included" (the with-handset seconds hand
-and stock white date wheel use this); omit `price` to show nothing.
-Currency symbol and the disclaimer line live in the `PRICING` block at
-the top of the same file. Prices are never stored in build codes —
-loading an old code prices it at today's numbers. ALL SEEDED PRICES ARE
-PLACEHOLDERS — edit them.
+- **Whitelist/blacklist** — best for "only these parts":
+  `compatible: { band: ["band-bracelet-rose"] }` on a case greys every
+  other band, in both directions, with the reason on the card.
+- **Numbers** — best for measurements: a dial declares
+  `specs: { dial_mm: 31 }`; a case declares
+  `accepts: { dial_mm: { max: 28.5 } }`. Comparators: min, max,
+  equals, oneOf — shorthand `{ k: "value" }` means equals, an array
+  means oneOf. **A part that doesn't declare a spec is never
+  constrained by it** — that's why whitelists are better for
+  "only accepts X".
 
-### Colour variants (one card, colour dots) — worked example
+Clients can never build an invalid combo (greyed parts don't click).
+Codes issued before a rule tightened still load, with a heads-up.
+Bad rules (unknown comparators, category-as-spec, unknown ids, specs
+nothing declares) print console warnings when the builder loads.
+Live experiments: edit `ACHUTA.parts` in the console, then
+`ACHUTA.refresh()`.
 
-Parts that come in several colours can render as ONE card with a colour
-dot per variant. The live example in the shipped catalogue is the Royal
-Oak case (rose + steel). Creating it took two edits in
-`js/parts-data.js`:
+### 9.6 Prices & the estimate
 
-**Edit 1 — tag the existing part with a group and a dot colour:**
+`price:` per part → card chip + "Estimated parts total" + a line in
+the commission email. Currency + disclaimer are in the `PRICING` block
+at the top of parts-data.js. Prices are NEVER stored in codes — old
+codes re-price at today's numbers. **All seeded prices are
+placeholders.**
 
-```js
-{ id: "case-royal-oak-rose", name: "Royal Oak · rose gold", vendor: "nomods", ...
-  group: "royal-oak", swatch: "#c98a5f",
-  ...all other fields unchanged... },
-```
+### 9.7 Layer order
 
-**Edit 2 — APPEND the new colourway at the END of its category list,
-same `group`, its own `swatch` (and its image in `/parts`):**
+The `LAYERS` map at the top of parts-data.js (band 10 · movement 20 ·
+dial 30 · window 40 · gmt 45 · handset 50 · seconds 60 · case 70).
+Higher = closer to the viewer. Cases sit on top (their transparent
+aperture shows the dial); the movement shows through cutout/open-heart
+dials. Any single part can override with `layer:`.
 
-```js
-{ id: "case-royal-oak-steel", name: "Royal Oak · steel", vendor: "nomods", url: "",
-  group: "royal-oak", swatch: "#cfd2d6", price: 95,
-  tags: ["Royal Oak", "Steel"], img: "parts/case-royal-oak-steel.png",
-  note: "Octagonal bezel · 37mm lug-to-lug",
-  accepts: { mov_brand: "nh" },
-  compatible: { band: ["band-bracelet-rose"] } }
-```
+### 9.8 Build codes & versions
 
-That's the whole recipe: same `group` string, one `swatch` per variant.
-The entries collapse into a single card; pressing a dot swaps the
-preview image, the card's name and price chip, and the build code. A
-third colour is just another appended entry with the same group — its
-dot appears automatically.
+A code (e.g. `AH-6222-2722R`) = version + one character per category +
+checksum, from an alphabet with no confusable characters. Decode a
+customer's code in "Have a code?" (or link `builder.html#CODE`) and
+every part snaps to their choices. The checksum rejects typos.
 
-Rules of the road:
+`HISTORY` in js/builder.js maps each code version to its category
+order. **Adding a category:** append its parts list in parts-data.js;
+append one line to `CATS` + add `yourcat: 0` to `state` and `filters`
+in builder.js; copy the last HISTORY line, append the new id, bump
+`VERSION`. Old codes keep loading (new categories default to their
+first part). If it's a visual layer, add an `<img>` to the stack in
+builder.html + one line in `applyPreview()`. The date wheel is the
+worked example of all of this.
 
-- **Append-only still applies.** New colourways go at the END of the
-  category list, never inserted beside their siblings — grouping is by
-  the `group` string, not by position, so previously issued codes are
-  untouched.
-- **Each variant is its own part** with its own code index, price,
-  image, and (optionally) its own compatibility rules — two colourways
-  may allow different bracelets simply by listing different ids.
-- **Codes distinguish colours**, so a commission tells you exactly
-  which colourway to build.
-- **Incompatible colours grey per-dot**, not per-card: if only the
-  steel variant conflicts with the current build, only its dot dims
-  (with the reason on hover) while the rose dot stays selectable.
-- Need a quick stand-in image for a new colourway? A luminance remap of
-  the existing colour's PNG works well until the real render exists
-  (the shipped steel Royal Oak was made exactly that way).
+### 9.9 Built-in behaviours (nothing to configure)
 
-### Compatibility rules (greying out parts)
+- **Mechanical sweep:** the seconds layer steps 6×/second (steps(360)
+  over 60s), synced to the real clock; static under reduced-motion.
+- **Included seconds hand** is the default and follows the handset.
+- **Collapsible categories:** the triangle in each header folds it;
+  the current pick stays visible in the header.
+- **My builds:** clients save up to 8 builds per browser
+  (localStorage); rows show name, code, date, today's price.
+- **Mobile mini-bar (≤980px):** live mini-preview + total pinned to
+  the bottom once the big preview scrolls away; "Preview ↑" returns.
+- **Filters** come from tags automatically; **codes react to hash
+  changes**, so gallery links swap builds without a reload.
 
-Rules live in `js/parts-data.js` next to the parts themselves — no code
-changes needed. Give parts physical attributes with `specs`
-(e.g. a dial declares `specs: { dial_mm: 31 }`) and let other parts
-constrain them with `accepts` (e.g. a case that only takes 28.5 mm dials
-declares `accepts: { dial_mm: { max: 28.5 } }` — min / max / equals /
-oneOf are supported). Shorthand also works: `accepts: { band_style: "royal-oak" }` means
-equals, and an array means oneOf. IMPORTANT: `accepts` only constrains
-parts that DECLARE the matching spec — a bracelet without
-`specs: { band_style: … }` is deliberately never greyed. So for
-"this case only takes bracelet X", prefer the whitelist on the case:
-`compatible: { band: ["band-x-id"] }`. Misconfigured rules (unknown
-categories, unknown part ids, accepts keys nothing declares) print
-warnings in the browser console when the builder loads.
+─────────────────────────────────────────────────────────────────────
 
-For one-off quirks, use explicit lists:
-`compatible: { seconds: ["sec-signal"] }` (whitelist) or
-`incompatible: { handset: ["hs-sword-gold"] }` (blacklist).
+## 10 · Troubleshooting
 
-Incompatible parts grey out in BOTH directions with the reason printed
-on the card ("Diver · steel fits dials ≤ 28.5 mm — this is 31 mm"), and
-greyed parts can't be clicked, so clients can never assemble an invalid
-combination. If you tighten rules after issuing codes, old codes still
-load exactly as commissioned but show a heads-up naming the conflict.
-For live experimenting, open the browser console on the builder page:
-edit `ACHUTA.parts`, then call `ACHUTA.refresh()`.
+- **Seconds hand not moving?** OS "Reduce Motion" is on (that's
+  deliberate), or you're viewing cached/old files — hard-refresh.
+- **A rule isn't greying anything?** Open the builder's console — the
+  lint tells you what's wrong. Usual cause: `accepts` against a spec
+  the target parts never declare → use `compatible:` instead.
+- **A new image sits misaligned?** Re-export over
+  tools/alignment-template.png; centre must be exactly 50%/50%.
+- **An old code shows an error?** v1/v2/v3 codes still load (older,
+  shorter formats); a "doesn't check out" message means a typo —
+  one character is wrong.
 
-### Adding real vendor parts (Nomad Watch Works, Namoki, DLW, …)
+## 11 · Design language (for anything new)
 
-The whole catalogue lives in `js/parts-data.js` — full instructions are at
-the top of that file. In short: export the vendor's part photo as a
-transparent PNG on the shared 840×1120 canvas — lay
-`tools/alignment-template.png` over your editor canvas as a guide layer
-(watch centre at exactly 50%/50%, dial ≈ 38% of canvas width, seconds
-hands pointing at 12), delete the guide, export — drop it in `/parts`, and APPEND one
-entry with name, vendor, url and tags. Never reorder or delete existing
-entries — appending keeps every previously issued build code valid. The
-included parts were drawn in-house as stand-ins; `tools/gen_parts.html`
-regenerates them if you tweak the artwork.
-
-## Easy edits
-
-- **Copy** — landing text lives in `index.html`; FAQ questions and
-  answers are plain HTML blocks in `faq.html` (copy a `.q` block to add
-  one; answers are DRAFTS — edit timelines/warranty wording to match
-  your actual policies).
-- **Overlay timing** — each overlay has `data-show="in-start,in-end,out-start,out-end"`
-  as fractions of that section's scroll (e.g. `0.34,0.46,0.60,0.72`).
-- **Scroll length per clip** — the `#hero / #macro / #build` heights in `css/style.css`
-  (380vh / 380vh / 430vh). Taller = slower scrub.
-- **Commission link** — the `mailto:` on the CTA button in `index.html`.
+Tokens in css/style.css: `--void` (black), `--bone` (warm white),
+`--gold` (accent), `--serif` (Cormorant Garamond — display),
+`--sans` (Jost — labels, letterspaced uppercase). Prose over boxes,
+hairlines over borders, gold sparingly, very few words.
