@@ -13,14 +13,32 @@
     { id: "dial",     name: "Dial",         thumb: "t-dial" },
     { id: "handset",  name: "Handset",      thumb: "t-hands" },
     { id: "seconds",  name: "Seconds hand", thumb: "t-sec" },
+    { id: "gmthand",  name: "GMT hand",     thumb: "t-gmt",
+      requiresWindow: "gmt",   /* only applies while the movement lists "gmt" in windows: */
+      naNote: "GMT hands come with a GMT movement — choose the Seiko NH34 above to pick one." },
     { id: "datewheel", name: "Date wheel",  thumb: "t-dw" }
   ];
 
   /* default = the watch from the films */
-  var state = { case: 0, band: 0, movement: 0, dial: 0, handset: 0, seconds: 5, datewheel: 0 };
-  var filters = { case: null, band: null, movement: null, dial: null, handset: null, seconds: null, datewheel: null };
+  var state = { case: 0, band: 0, movement: 0, dial: 0, handset: 0, seconds: 5, gmthand: 0, datewheel: 0 };
+  var filters = { case: null, band: null, movement: null, dial: null, handset: null, seconds: null, gmthand: null, datewheel: null };
 
   function part(cat) { return PARTS[cat][state[cat]]; }
+
+  /* ── category availability ────────────────────────
+     A category with requiresWindow: "gmt" only applies while the selected
+     movement lists that token in its windows:. Otherwise its section greys
+     out, its price leaves the estimate, and the commission email omits it
+     (the pick stays encoded in the build code, dormant, exactly like a
+     date wheel on a no-date movement). Used by the GMT hand category. */
+  function catById(id) {
+    for (var i = 0; i < CATS.length; i++) if (CATS[i].id === id) return CATS[i];
+    return null;
+  }
+  function catAvailable(cat) {
+    if (!cat || !cat.requiresWindow) return true;
+    return (part("movement").windows || []).indexOf(cat.requiresWindow) >= 0;
+  }
 
   /* ── compatibility engine ────────────────────────────
      Rules live entirely in parts-data.js:
@@ -115,6 +133,19 @@
 
   /* card registry: one entry per rendered card; groups list several part indices */
   var CARDREG = {};
+  /* section registry: one element trio per category, for availability greying */
+  var SECS = {};
+  function updateAvailability() {
+    CATS.forEach(function (cat) {
+      if (!cat.requiresWindow) return;
+      var reg = SECS[cat.id];
+      if (!reg) return;
+      var ok = catAvailable(cat);
+      reg.sec.classList.toggle("is-na", !ok);
+      reg.tog.disabled = !ok;
+      reg.inner.inert = !ok || reg.sec.classList.contains("is-collapsed");
+    });
+  }
   function updateCards() {
     CATS.forEach(function (cat) {
       var parts = PARTS[cat.id], sel = state[cat.id];
@@ -165,6 +196,7 @@
   function priceOf(catId) {
     var p = part(catId);
     if (p.matchesHandset) return 0;                 /* included seconds costs nothing */
+    if (!catAvailable(catById(catId))) return 0;    /* e.g. GMT hand without a GMT movement */
     return p.price || 0;
   }
   function secondsImg() {
@@ -191,7 +223,10 @@
     var mov = part("movement");
     var dw = part("datewheel");
     var ovls = (mov.windows || []).map(function (w) {
-      if (w === "gmt") return { src: "parts/ovl-gmt.png", z: LAYERS.gmt };
+      if (w === "gmt") {
+        var gp = part("gmthand");
+        return { src: gp.img, z: (gp.layer != null ? gp.layer : LAYERS.gmt) };
+      }
       var s = dw.imgs && dw.imgs[w];
       return s ? { src: s, z: (dw.layer != null ? dw.layer : LAYERS.window) } : null;
     }).filter(Boolean);
@@ -235,9 +270,10 @@
   var HISTORY = {
     2: ["case", "movement", "dial", "handset", "seconds"],
     3: ["case", "movement", "dial", "handset", "seconds", "datewheel"],
-    4: ["case", "movement", "dial", "handset", "seconds", "datewheel", "band"]
+    4: ["case", "movement", "dial", "handset", "seconds", "datewheel", "band"],
+    5: ["case", "movement", "dial", "handset", "seconds", "datewheel", "band", "gmthand"]
   };
-  var VERSION = 4;
+  var VERSION = 5;
 
   function digits(s) { return [VERSION].concat(HISTORY[VERSION].map(function (id) { return s[id]; })); }
   function checksum(ds) {
@@ -284,10 +320,12 @@
   function apply() {
     applyPreview();
     refreshCompat();
+    updateAvailability();
 
     CATS.forEach(function (cat) {
       var cur = document.getElementById("cur-" + cat.id);
-      if (cur) cur.textContent = part(cat.id).name;
+      if (cur) cur.textContent = catAvailable(cat) ? part(cat.id).name
+        : "Needs a " + cat.requiresWindow.toUpperCase() + " movement";
     });
 
     var total = 0;
@@ -305,10 +343,12 @@
     var incThumb = document.querySelector('.card[data-cat="seconds"] .thumb-dynamic');
     if (incThumb) incThumb.style.backgroundImage = "url('" + (part("handset").includedSeconds || PARTS.seconds[0].img) + "')";
 
-    var lines = CATS.map(function (c) {
+    var lines = [];
+    CATS.forEach(function (c) {
+      if (!catAvailable(c)) return;                 /* GMT hand is only listed with a GMT movement */
       var p = part(c.id);
-      if (p.matchesHandset) return c.name + ": " + p.name + " — matches " + part("handset").name;
-      return c.name + ": " + p.name + " (" + p.vendor + ")";
+      if (p.matchesHandset) { lines.push(c.name + ": " + p.name + " — matches " + part("handset").name); return; }
+      lines.push(c.name + ": " + p.name + " (" + p.vendor + ")");
     });
     var body = "ACHUTA HANDMADE — commission request%0D%0A%0D%0ABuild code: " + code + "%0D%0A%0D%0A" +
       lines.join("%0D%0A") +
@@ -336,11 +376,18 @@
         '<div class="cat-body" id="body-' + cat.id + '"><div class="cat-body-inner"></div></div>';
       var inner = sec.querySelector(".cat-body-inner");
       var tog = sec.querySelector(".cat-toggle");
+      SECS[cat.id] = { sec: sec, inner: inner, tog: tog };
       tog.addEventListener("click", function () {
         var collapsed = sec.classList.toggle("is-collapsed");
         tog.setAttribute("aria-expanded", String(!collapsed));
-        inner.inert = collapsed;                 /* hidden parts leave the tab order */
+        inner.inert = collapsed || sec.classList.contains("is-na");   /* hidden parts leave the tab order */
       });
+      if (cat.requiresWindow) {                    /* why this section may be greyed */
+        var naMsg = document.createElement("p");
+        naMsg.className = "cat-na";
+        naMsg.textContent = cat.naNote || ("Available with a " + cat.requiresWindow.toUpperCase() + " movement.");
+        inner.appendChild(naMsg);
+      }
 
       /* filter chips from the union of tags */
       var tags = [];
@@ -538,7 +585,9 @@
   }
   function priceForState(s) {
     var t = 0;
+    var mov = PARTS.movement[s.movement] || PARTS.movement[0];
     CATS.forEach(function (c) {
+      if (c.requiresWindow && (mov.windows || []).indexOf(c.requiresWindow) < 0) return;
       var p = PARTS[c.id][s[c.id]];
       if (p && !p.matchesHandset) t += p.price || 0;
     });

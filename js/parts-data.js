@@ -76,7 +76,7 @@ var LAYERS = {
   movement: 20,    /* visible through skeleton / cutout dials          */
   dial: 30,
   window: 40,      /* date & day-date apertures                        */
-  gmt: 45,
+  gmt: 45,         /* the selected GMT hand (gmthand category)         */
   handset: 50,
   seconds: 60,
   case: 70         /* on top: the bezel overlaps the dial edge,        */
@@ -213,5 +213,28 @@ var PARTS = {
       tags: ["Leather", "Noir"], img: "parts/band-leather-noir.png" },
     { id: "band-leather-cognac", price: 26, name: "Leather · cognac", vendor: "ACHUTA stock", url: "",
       tags: ["Leather", "Cognac"], img: "parts/band-leather-cognac.png" }
+  ],
+
+  /* GMT HANDS — only offered while the selected movement lists "gmt"
+     in its windows: (today that's the NH34). The builder greys this
+     whole category out, drops its price from the estimate, and omits
+     it from the commission email whenever a non-GMT movement is
+     selected — see "GMT hands" in README §9. The selected hand renders
+     through the movement's gmt overlay slot at LAYERS.gmt (a part can
+     still override with layer:). Artwork pose: same 128° rotation as
+     the stock hand, drawn in tools/gen_parts.html. APPEND-only, as
+     with every category. */
+  gmthand: [
+    { id: "gmt-signal-red", price: 0, name: "Signal GMT · red", vendor: "Seiko · TMI", url: "",
+      tags: ["Red", "Stock"], featured: true, img: "parts/ovl-gmt.png",
+      note: "The hand the NH34 ships with" },
+    { id: "gmt-azure-steel", price: 12, name: "Azure GMT · steel", vendor: "ACHUTA stock", url: "",
+      tags: ["Blue", "Steel"], img: "parts/gmt-azure-steel.png" },
+    { id: "gmt-sunset-gold", price: 14, name: "Sunset GMT · gold", vendor: "ACHUTA stock", url: "",
+      tags: ["Orange", "Gold"], img: "parts/gmt-sunset-gold.png" },
+    { id: "gmt-lollipop-lume", price: 15, name: "Lollipop GMT · lume", vendor: "ACHUTA stock", url: "",
+      tags: ["Lume", "Lollipop"], img: "parts/gmt-lollipop-lume.png" },
+    { id: "gmt-skeleton-onyx", price: 13, name: "Skeleton GMT · onyx", vendor: "ACHUTA stock", url: "",
+      tags: ["Onyx", "Lume"], img: "parts/gmt-skeleton-onyx.png" }
   ]
 };
