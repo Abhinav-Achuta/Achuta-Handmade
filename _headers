@@ -1,0 +1,13 @@
+# Caching for Cloudflare Pages / Netlify (same format on both).
+# Heavy, rarely-changing assets get a 7-day browser cache — NOT immutable,
+# so replacing a part image under the same filename still propagates
+# within a week. Ignored by localhost python server; harmless elsewhere.
+
+/seq/*
+  Cache-Control: public, max-age=604800
+
+/parts/*
+  Cache-Control: public, max-age=604800
+
+/gallery/*
+  Cache-Control: public, max-age=604800

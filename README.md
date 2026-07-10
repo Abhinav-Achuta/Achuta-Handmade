@@ -21,8 +21,13 @@ python3 -m http.server 8080          → open http://localhost:8080
 (`ipconfig getifaddr en0` on Mac, `ipconfig` on Windows) and open
 `http://THAT-IP:8080` on the same Wi-Fi.
 
-**Deploy:** any static host works as-is — Netlify (drag the folder
-onto app.netlify.com/drop), Vercel, GitHub Pages, nginx.
+**Deploy:** any static host works as-is — there is no build step, so
+every host's "build command" is blank and the publish directory is the
+folder root. Recommended: Cloudflare Pages (free, unlimited bandwidth —
+this site's frame sequences make bandwidth the one thing that matters).
+The `_headers` file at the root gives the heavy assets a 7-day cache on
+Cloudflare Pages and Netlify automatically. Avoid Vercel's free tier
+(non-commercial only) for this business site.
 
 ## 2 · What's in the folder
 
