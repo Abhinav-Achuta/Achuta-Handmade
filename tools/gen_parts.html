@@ -311,6 +311,33 @@
     el("polygon", { points: (CX - 5) + "," + (CY - 52) + " " + CX + "," + (CY - 66) + " " + (CX + 5) + "," + (CY - 52), fill: "#b3382e", stroke: "rgba(0,0,0,.4)", "stroke-width": .6 }, g);
   })();
 
+  /* ── GMT hand variants (gmthand category) — same 128° pose as the stock
+     hand above so every variant composites identically over the dial ── */
+  (function () { /* azure — steel stem, blue arrow tip */
+    var id = "gmt-azure-steel", s = newPart(id, "GMT · azure");
+    var g = el("g", { transform: "rotate(128 " + CX + " " + CY + ")" }, s);
+    el("line", { x1: CX, y1: CY + 8, x2: CX, y2: CY - 52, stroke: M(id, "steel"), "stroke-width": 2.4 }, g);
+    el("polygon", { points: (CX - 5) + "," + (CY - 52) + " " + CX + "," + (CY - 66) + " " + (CX + 5) + "," + (CY - 52), fill: "#2f5aa8", stroke: "rgba(0,0,0,.4)", "stroke-width": .6 }, g);
+  })();
+  (function () { /* sunset — gold stem, orange arrow tip */
+    var id = "gmt-sunset-gold", s = newPart(id, "GMT · sunset");
+    var g = el("g", { transform: "rotate(128 " + CX + " " + CY + ")" }, s);
+    el("line", { x1: CX, y1: CY + 8, x2: CX, y2: CY - 52, stroke: M(id, "gold"), "stroke-width": 2.4 }, g);
+    el("polygon", { points: (CX - 5) + "," + (CY - 52) + " " + CX + "," + (CY - 66) + " " + (CX + 5) + "," + (CY - 52), fill: "#d07a2e", stroke: "rgba(0,0,0,.4)", "stroke-width": .6 }, g);
+  })();
+  (function () { /* lollipop — steel stem, lume dot */
+    var id = "gmt-lollipop-lume", s = newPart(id, "GMT · lollipop lume");
+    var g = el("g", { transform: "rotate(128 " + CX + " " + CY + ")" }, s);
+    el("line", { x1: CX, y1: CY + 8, x2: CX, y2: CY - 56, stroke: M(id, "steel"), "stroke-width": 2.4 }, g);
+    el("circle", { cx: CX, cy: CY - 61, r: 5.2, fill: "#efe9dc", stroke: "#83868c", "stroke-width": 1.2 }, g);
+  })();
+  (function () { /* skeleton — onyx stem, outlined lume tip (matches sec-arrow-onyx) */
+    var id = "gmt-skeleton-onyx", s = newPart(id, "GMT · skeleton onyx");
+    var g = el("g", { transform: "rotate(128 " + CX + " " + CY + ")" }, s);
+    el("line", { x1: CX, y1: CY + 8, x2: CX, y2: CY - 52, stroke: M(id, "onyx"), "stroke-width": 2.6 }, g);
+    el("polygon", { points: (CX - 5) + "," + (CY - 52) + " " + CX + "," + (CY - 66) + " " + (CX + 5) + "," + (CY - 52), fill: "#efe9dc", stroke: "#2a2a2d", "stroke-width": .8 }, g);
+  })();
+
   /* ── movement thumbnails (cards only, not stacked) ── */
   function movement(id, label, kind) {
     var s = newPart(id, label);

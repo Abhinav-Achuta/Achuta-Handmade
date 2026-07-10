@@ -281,6 +281,9 @@
 /* band thumbnails show the whole strap */
 .t-band{ background-size:contain; }
 
+/* GMT hand thumbnails zoom onto the hand (it points at ~4:30) */
+.t-gmt{ background-size:400%; background-position:56.5% 53.7%; }
+
 /* ═══ collapsible categories ═══ */
 .cat-toggle{
   appearance:none; background:transparent; border:none; cursor:pointer;
@@ -314,6 +317,25 @@
   .cat-body, .caret{ transition-duration:.01s; }
   .cat.is-collapsed .cat-body-inner{ transition-delay:0s; }
 }
+
+/* ═══ not-applicable category (e.g. GMT hands without a GMT movement) ═══
+   builder.js toggles .is-na on the whole section; the note explains why. */
+.cat.is-na .cat-head{ opacity:.55; }
+.cat.is-na .cat-toggle{ cursor:default; }
+.cat.is-na .chips,
+.cat.is-na .grid{
+  opacity:.32;
+  filter:grayscale(.75);
+  pointer-events:none;
+  user-select:none;
+}
+.cat-na{
+  display:none;
+  margin:.1rem 0 1rem;
+  font-size:.62rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--gold); line-height:1.7;
+}
+.cat.is-na .cat-na{ display:block; }
 
 /* ═══ colour-variant dots ═══ */
 .card--group{ cursor:pointer; }

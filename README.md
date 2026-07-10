@@ -134,8 +134,8 @@ page (rule in §5). The FAQ is a finished example of the pattern.
 
 ### 9.1 How it works in one paragraph
 
-Seven categories (case, band, movement, dial, handset, seconds hand,
-date wheel). Every part is a transparent PNG layer on a shared 840×1120
+Eight categories (case, band, movement, dial, handset, seconds hand,
+GMT hand, date wheel). Every part is a transparent PNG layer on a shared 840×1120
 canvas; the preview stacks the selected layers in z-order. Everything —
 parts, prices, rules, layer order — lives in **js/parts-data.js**.
 The engine (js/builder.js) reads it; you almost never edit the engine.
@@ -170,9 +170,11 @@ they add), `bps: 6` (sweep beats per second — 8 for a 28,800 vph
 calibre), and `spec:` (the line under the preview). **Handsets** have
 `includedSeconds: "parts/….png"` — the hand their kit ships with.
 **Date wheels** have `imgs: { date, daydate }` (their window images).
-The special seconds part with `matchesHandset: true` renders the
-selected handset's included hand; `featured: true` floats any part to
-the front of its grid WITHOUT changing its code index.
+**GMT hands** are a whole category that only applies with a GMT
+movement — see §9.10. The special seconds part with
+`matchesHandset: true` renders the selected handset's included hand;
+`featured: true` floats any part to the front of its grid WITHOUT
+changing its code index.
 
 ### 9.3 Adding / replacing part images
 
@@ -252,7 +254,8 @@ in builder.js; copy the last HISTORY line, append the new id, bump
 `VERSION`. Old codes keep loading (new categories default to their
 first part). If it's a visual layer, add an `<img>` to the stack in
 builder.html + one line in `applyPreview()`. The date wheel is the
-worked example of all of this.
+worked example of all of this; the GMT hand (§9.10) adds one twist —
+a category gated on the selected movement.
 
 ### 9.9 Built-in behaviours (nothing to configure)
 
@@ -267,6 +270,28 @@ worked example of all of this.
   the bottom once the big preview scrolls away; "Preview ↑" returns.
 - **Filters** come from tags automatically; **codes react to hash
   changes**, so gallery links swap builds without a reload.
+
+### 9.10 GMT hands (only with a GMT movement)
+
+The **GMT hand** category is tied to the movement: a `CATS` entry in
+builder.js may declare `requiresWindow: "gmt"`, and the category then
+only applies while the selected movement lists that token in its
+`windows:` (today that's the NH34, `windows: ["date","gmt"]`).
+
+With any other movement the whole section greys out with a note
+(text is the `naNote:` on the `CATS` entry), its cards stop reacting,
+its price leaves the running estimate, and the commission email omits
+it. Pick the NH34 and it wakes up: the chosen hand renders through the
+movement's gmt overlay slot at `LAYERS.gmt` (a part can still override
+with `layer:`) and its price rejoins the total.
+
+The customer's GMT-hand pick is always stored in the build code —
+switching to a non-GMT movement leaves it encoded but dormant, exactly
+like a date wheel on a no-date movement, so nothing is lost by
+toggling movements. New hands: draw them in tools/gen_parts.html in
+the same 128° pose as the stock hand (so they composite identically),
+export to /parts, APPEND to `gmthand` in parts-data.js. The stock red
+hand ships with the NH34, so it's `price: 0` ("Included").
 
 ─────────────────────────────────────────────────────────────────────
 
