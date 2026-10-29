@@ -155,9 +155,13 @@ var PARTS = {
     { id: "dial-openheart-hammered-green", price: 58,  name: "Open heart Hammered Pattern - Green", vendor: "dialmaker.shop", url: "",
       tags: ["Open Heart", "Textured"], img: "parts/dial-openheart-hammered-green.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
     { id: "dial-khaki-field-black", price: 10, name: "Khaki Field Black", vendor: "ACHUTA stock", url: "",
-      tags: ["Dark", "Field"], img: "parts/dial-khaki-field-black.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
+      tags: ["Dark", "Field", "Textured"], img: "parts/dial-khaki-field-black.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "khaki-field", swatch: "#000000" },
     { id: "dial-khaki-field-white", price: 10, name: "Khaki Field White", vendor: "ACHUTA stock", url: "",
-      tags: ["Light", "Field"], img: "parts/dial-khaki-field-white.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
+      tags: ["Light", "Field", "Textured"], img: "parts/dial-khaki-field-white.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "khaki-field", swatch: "#FFFFFF" },
+    { id: "dial-blue-green-pilot", price: 25, name: "Vintage Pilot blue-green", vendor: "ACHUTA stock", url: "",
+      tags: ["Pilot"], img: "parts/dial-blue-green-pilot.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "pilot", swatch: "#252C3E" },
+    { id: "dial-green-green-pilot", price: 25, name: "Vintage Pilot green-green", vendor: "ACHUTA stock", url: "",
+      tags: ["Pilot"], img: "parts/dial-green-green-pilot.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "pilot", swatch: "#414D41" },
   ],
 
   handset: [
