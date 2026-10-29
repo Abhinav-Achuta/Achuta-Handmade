@@ -107,7 +107,13 @@ var PARTS = {
       tags: ["Royal Oak", "Steel"], img: "parts/case-royal-oak-steel.png",
       note: "Octagonal bezel · 37mm lug-to-lug",
       accepts: { mov_brand: "nh" },
-      compatible: { band: ["band-bracelet-rose"] } }
+      compatible: { band: ["band-bracelet-rose"] } },
+    { id: "case-pilot-steel", price: 45,   name: "Pilot · steel", vendor: "Tandorio", url: "",
+      group: "pilot", swatch: "#B8ADAB",
+      tags: ["pilot", "Steel"], img: "parts/case-pilot-steel.png",
+      note: "pilot style · 36mm case diameter",
+      accepts: { mov_brand: "nh", dial_mm: { max: 28.5 } },
+      compatible: { band: ["band-leather-cognac", "band-leather-noir", "band-rubber-noir"] } }
   ],
 
   movement: [
@@ -147,7 +153,11 @@ var PARTS = {
     { id: "dial-ivory", price: 30,  name: "Ivory matte", vendor: "ACHUTA stock", url: "",
       tags: ["Light", "Matte"], img: "parts/dial-ivory.png", note: "ø 31 mm", specs: { dial_mm: 31 } },
     { id: "dial-openheart-hammered-green", price: 58,  name: "Open heart Hammered Pattern - Green", vendor: "dialmaker.shop", url: "",
-      tags: ["Open Heart", "Textured"], img: "parts/dial-openheart-hammered-green.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } }
+      tags: ["Open Heart", "Textured"], img: "parts/dial-openheart-hammered-green.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
+    { id: "dial-khaki-field-black", price: 10, name: "Khaki Field Black", vendor: "ACHUTA stock", url: "",
+      tags: ["Dark", "Field"], img: "parts/dial-khaki-field-black.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
+    { id: "dial-khaki-field-white", price: 10, name: "Khaki Field White", vendor: "ACHUTA stock", url: "",
+      tags: ["Light", "Field"], img: "parts/dial-khaki-field-white.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
   ],
 
   handset: [
