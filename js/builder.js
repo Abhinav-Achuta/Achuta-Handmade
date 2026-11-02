@@ -16,7 +16,10 @@
     { id: "gmthand",  name: "GMT hand",     thumb: "t-gmt",
       requiresWindow: "gmt",   /* only applies while the movement lists "gmt" in windows: */
       naNote: "GMT hands come with a GMT movement — choose the Seiko NH34 above to pick one." },
-    { id: "datewheel", name: "Date wheel",  thumb: "t-dw" }
+    { id: "datewheel", name: "Date wheel",  thumb: "t-dw",
+      requiresWindow: ["date", "daydate"],   /* only with a date or day-date movement */
+      naLabel: "Needs a date movement",
+      naNote: "Date wheels only apply to movements with a date — choose the NH35, NH36 or NH34 above to pick one." }
   ];
 
   /* default = the watch from the films */
@@ -37,7 +40,15 @@
   }
   function catAvailable(cat) {
     if (!cat || !cat.requiresWindow) return true;
-    return (part("movement").windows || []).indexOf(cat.requiresWindow) >= 0;
+    return movHasWindow(part("movement"), cat.requiresWindow);
+  }
+  /* requiresWindow may be one token ("gmt") or a list (["date","daydate"]) */
+  function movHasWindow(mov, req) {
+    var have = (mov && mov.windows) || [];
+    return [].concat(req).some(function (w) { return have.indexOf(w) >= 0; });
+  }
+  function naLabel(cat) {
+    return cat.naLabel || ("Needs a " + [].concat(cat.requiresWindow).join(" / ").toUpperCase() + " movement");
   }
 
   /* ── compatibility engine ────────────────────────────
@@ -74,15 +85,79 @@
   function compatReason(pCat, P, sCat, S) {
     return oneWay(S, P, pCat) || oneWay(P, S, sCat);
   }
-  /* reason P can't join the current selection (null = compatible) */
-  function conflictWithSelection(pCat, P) {
+  /* reason P can't join selection s (null = compatible).
+     skip: optional {catId:true} of categories to ignore. */
+  function conflictIn(s, pCat, P, skip) {
     for (var c = 0; c < CATS.length; c++) {
       var sCat = CATS[c].id;
-      if (sCat === pCat) continue;
-      var r = compatReason(pCat, P, sCat, part(sCat));
+      if (sCat === pCat || (skip && skip[sCat])) continue;
+      var r = compatReason(pCat, P, sCat, PARTS[sCat][s[sCat]]);
       if (r) return r;
     }
     return null;
+  }
+
+  /* ── auto-swap planner ───────────────────────────────
+     Picking a part may automatically swap parts in categories listed
+     AFTER it in CATS (e.g. a new case swaps the band/dial/movement
+     for ones that fit). Conflicts with categories listed BEFORE it
+     still grey the part out (e.g. a band that doesn't fit the case).
+     Returns { state, swaps:[{cat, from, to}] } or { err: reason }. */
+  function catIndex(id) {
+    for (var i = 0; i < CATS.length; i++) if (CATS[i].id === id) return i;
+    return -1;
+  }
+  function planChoice(catId, i) {
+    var s = {}, k;
+    for (k in state) s[k] = state[k];
+    s[catId] = i;
+    var P = PARTS[catId][i], at = catIndex(catId);
+
+    /* hard conflicts: categories that rank above this one never move */
+    var above = {};
+    CATS.forEach(function (c, ci) { if (ci > at) above[c.id] = true; });
+    var hard = conflictIn(s, catId, P, above);
+    if (hard) return { err: hard };
+
+    /* later categories whose current part no longer fits */
+    var pending = {}, firstWhy = {}, any = false;
+    CATS.forEach(function (c, ci) {
+      if (ci <= at) return;
+      var r = conflictIn(s, c.id, PARTS[c.id][s[c.id]]);
+      if (r) { pending[c.id] = true; firstWhy[c.id] = r; any = true; }
+    });
+    if (!any) return { state: s, swaps: [] };
+
+    var swaps = [];
+    for (var ci = at + 1; ci < CATS.length; ci++) {
+      var cid = CATS[ci].id;
+      if (!pending[cid]) continue;
+      delete pending[cid];
+      var parts = PARTS[cid], cur = parts[s[cid]];
+      if (!conflictIn(s, cid, cur, pending)) continue;          /* fixed by an earlier swap */
+      /* candidates: same colour group first, then featured, then catalogue order */
+      var order = parts.map(function (p, j) { return j; });
+      order.sort(function (a, b) {
+        var ga = cur.group && parts[a].group === cur.group ? 1 : 0;
+        var gb = cur.group && parts[b].group === cur.group ? 1 : 0;
+        var fa = parts[a].featured ? 1 : 0, fb = parts[b].featured ? 1 : 0;
+        return (gb - ga) || (fb - fa) || (a - b);
+      });
+      var pick = -1;
+      for (var o = 0; o < order.length; o++) {
+        if (!conflictIn(s, cid, parts[order[o]], pending)) { pick = order[o]; break; }
+      }
+      if (pick < 0) return { err: firstWhy[cid] };              /* nothing in that category fits */
+      swaps.push({ cat: cid, from: s[cid], to: pick });
+      s[cid] = pick;
+    }
+    return { state: s, swaps: swaps };
+  }
+  function swapText(swaps) {
+    return swaps.map(function (w) {
+      var c = catById(w.cat);
+      return c.name.split(" / ")[0] + " → " + PARTS[w.cat][w.to].name;
+    }).join(" · ");
   }
   /* conflicts inside the current selection itself (used after code loads) */
   function selectionConflicts() {
@@ -149,8 +224,12 @@
   function updateCards() {
     CATS.forEach(function (cat) {
       var parts = PARTS[cat.id], sel = state[cat.id];
-      var reasons = parts.map(function (p, i) {
-        return i === sel ? null : conflictWithSelection(cat.id, p);   /* selected never greys */
+      var plans = parts.map(function (p, i) {
+        return i === sel ? null : planChoice(cat.id, i);              /* selected never greys */
+      });
+      var reasons = plans.map(function (pl) { return pl && pl.err ? pl.err : null; });
+      var hints = plans.map(function (pl) {                          /* "picking this also swaps …" */
+        return pl && !pl.err && pl.swaps.length ? "Also switches " + swapText(pl.swaps) : null;
       });
       (CARDREG[cat.id] || []).forEach(function (reg) {
         var el = reg.el;
@@ -181,7 +260,11 @@
         el.classList.toggle("is-off", allOff);
         if (allOff) { el.setAttribute("aria-disabled", "true"); el.setAttribute("title", why || ""); }
         else { el.removeAttribute("aria-disabled"); el.removeAttribute("title"); }
-        el.querySelector(".card-why").textContent = allOff ? (why || "") : (reg.members.length === 1 && reasons[reg.members[0]] ? reasons[reg.members[0]] : "");
+        var whyEl = el.querySelector(".card-why");
+        var whyText = allOff ? (why || "") : (reg.members.length === 1 && reasons[reg.members[0]] ? reasons[reg.members[0]] : "");
+        var hint = !whyText && !reasons[activeIdx] ? hints[activeIdx] : null;
+        whyEl.textContent = whyText || hint || "";
+        whyEl.classList.toggle("is-swap", !!hint);
       });
     });
   }
@@ -325,7 +408,7 @@
     CATS.forEach(function (cat) {
       var cur = document.getElementById("cur-" + cat.id);
       if (cur) cur.textContent = catAvailable(cat) ? part(cat.id).name
-        : "Needs a " + cat.requiresWindow.toUpperCase() + " movement";
+        : naLabel(cat);
     });
 
     var total = 0;
@@ -376,7 +459,11 @@
         '<div class="cat-body" id="body-' + cat.id + '"><div class="cat-body-inner"></div></div>';
       var inner = sec.querySelector(".cat-body-inner");
       var tog = sec.querySelector(".cat-toggle");
-      SECS[cat.id] = { sec: sec, inner: inner, tog: tog };
+      var swapNote = document.createElement("p");
+      swapNote.className = "cat-swap";
+      swapNote.setAttribute("aria-live", "polite");
+      inner.appendChild(swapNote);
+      SECS[cat.id] = { sec: sec, inner: inner, tog: tog, swap: swapNote };
       tog.addEventListener("click", function () {
         var collapsed = sec.classList.toggle("is-collapsed");
         tog.setAttribute("aria-expanded", String(!collapsed));
@@ -385,7 +472,7 @@
       if (cat.requiresWindow) {                    /* why this section may be greyed */
         var naMsg = document.createElement("p");
         naMsg.className = "cat-na";
-        naMsg.textContent = cat.naNote || ("Available with a " + cat.requiresWindow.toUpperCase() + " movement.");
+        naMsg.textContent = cat.naNote || (naLabel(cat) + ".");
         inner.appendChild(naMsg);
       }
 
@@ -460,7 +547,14 @@
 
         function choose(i) {
           if (b.classList.contains("is-off")) return;
-          state[cat.id] = i; apply();
+          var plan = planChoice(cat.id, i);
+          if (plan.err) return;
+          state = plan.state; apply();
+          var note = SECS[cat.id].swap;
+          clearTimeout(note._t);
+          note.textContent = plan.swaps.length
+            ? "To fit " + PARTS[cat.id][i].name + ": " + swapText(plan.swaps) + "." : "";
+          if (plan.swaps.length) note._t = setTimeout(function () { note.textContent = ""; }, 6000);
         }
         b.addEventListener("click", function (e) {
           var dot = e.target.closest ? e.target.closest(".dot") : null;
@@ -587,7 +681,7 @@
     var t = 0;
     var mov = PARTS.movement[s.movement] || PARTS.movement[0];
     CATS.forEach(function (c) {
-      if (c.requiresWindow && (mov.windows || []).indexOf(c.requiresWindow) < 0) return;
+      if (c.requiresWindow && !movHasWindow(mov, c.requiresWindow)) return;
       var p = PARTS[c.id][s[c.id]];
       if (p && !p.matchesHandset) t += p.price || 0;
     });

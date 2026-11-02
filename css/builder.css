@@ -274,6 +274,12 @@
   color:#c96a5a; min-height:0;
 }
 .card-why:empty{ display:none; }
+.card-why.is-swap{ color:var(--gold); opacity:.8; }   /* "also switches band → …" hint */
+.cat-swap{
+  font-size:.62rem; letter-spacing:.06em; line-height:1.5;
+  color:var(--gold); margin:0 0 .6rem;
+}
+.cat-swap:empty{ display:none; }
 
 /* date-wheel thumbnails zoom onto the 3 o'clock window */
 .t-dw{ background-size:620%; background-position:63.5% 50%; }
