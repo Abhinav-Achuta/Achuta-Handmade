@@ -218,6 +218,22 @@ Two styles, both written on the parts:
   "only accepts X".
 
 Clients can never build an invalid combo (greyed parts don't click).
+**Auto-swap:** picking a part may automatically swap parts in
+categories listed *after* it in `CATS` (builder.js) for the first ones
+that fit — so choosing a new case is never blocked by the current
+band/dial/movement; the builder swaps them (same colour group first,
+then featured, then catalogue order) and says what it changed. A part
+only greys out when it conflicts with a category listed *before* it
+(e.g. a band that doesn't fit the selected case), or when nothing in a
+later category fits it.
+
+**Hands ↔ movements:** every handset and seconds hand declares the
+movement family it fits, e.g. `accepts: { mov_brand: "nh" }`
+(movements carry `specs: { mov_brand: "nh" }` or `"vh"`). Use `"vh"`
+for VH-only hands, `["nh", "vh"]` (or nothing) for hands that fit
+both. Non-fitting hands grey out with "fits NH movements only", and a
+movement with no fitting hands at all greys out until you add some.
+"Included with handset" has no rule; it follows the handset.
 Codes issued before a rule tightened still load, with a heads-up.
 Bad rules (unknown comparators, category-as-spec, unknown ids, specs
 nothing declares) print console warnings when the builder loads.
@@ -277,6 +293,12 @@ The **GMT hand** category is tied to the movement: a `CATS` entry in
 builder.js may declare `requiresWindow: "gmt"`, and the category then
 only applies while the selected movement lists that token in its
 `windows:` (today that's the NH34, `windows: ["date","gmt"]`).
+
+`requiresWindow` may also be a list, meaning "any of these". The
+**Date wheel** category uses `requiresWindow: ["date", "daydate"]`, so
+it greys out the same way on the NH38 and VH31 (no date) and wakes up
+on the NH35, NH36 and NH34. `naLabel:` sets the short text shown next
+to the section name while it's unavailable.
 
 With any other movement the whole section greys out with a note
 (text is the `naNote:` on the `CATS` entry), its cards stop reacting,
