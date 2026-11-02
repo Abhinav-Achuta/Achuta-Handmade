@@ -55,6 +55,12 @@
      Rules live entirely in parts-data.js:
      specs / accepts {min,max,equals,oneOf} / compatible / incompatible */
   function ruleText(owner, key, cons, val) {
+    if (key === "mov_brand") {                       /* movement family, e.g. NH vs VH */
+      var ok = cons.oneOf || (cons.equals != null ? [cons.equals] : null);
+      if (ok && ok.indexOf(val) < 0)
+        return owner.name + " fits " + ok.map(function (b) { return String(b).toUpperCase(); }).join(" / ") + " movements only";
+      return null;
+    }
     var unit = /_mm$/.test(key) ? " mm" : "";
     var label = key.replace(/_mm$/, "").replace(/_/g, " ");
     if (cons.max != null && val > cons.max) return owner.name + " fits " + label + "s ≤ " + cons.max + unit + " — this is " + val + unit;
@@ -147,7 +153,7 @@
       for (var o = 0; o < order.length; o++) {
         if (!conflictIn(s, cid, parts[order[o]], pending)) { pick = order[o]; break; }
       }
-      if (pick < 0) return { err: firstWhy[cid] };              /* nothing in that category fits */
+      if (pick < 0) return { err: "No " + catById(cid).name.toLowerCase() + " in the catalogue fits " + P.name + " yet" };   /* nothing in that category fits */
       swaps.push({ cat: cid, from: s[cid], to: pick });
       s[cid] = pick;
     }

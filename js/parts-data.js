@@ -169,42 +169,61 @@ var PARTS = {
       tags: ["Pilot"], img: "parts/dial-green-green-pilot.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "pilot", swatch: "#414D41" },
   ],
 
+  /* MOVEMENT FIT — hands are made for one movement family. Each hand
+     says which families it fits with  accepts: { mov_brand: "nh" }
+     (movements declare specs: { mov_brand: "nh" | "vh" }).
+       • NH-only:  accepts: { mov_brand: "nh" }
+       • VH-only:  accepts: { mov_brand: "vh" }
+       • both:     accepts: { mov_brand: ["nh", "vh"] }  (or leave it out)
+     Hands that don't fit the chosen movement grey out, and picking a
+     movement swaps in a hand that fits. Same rule for seconds hands. */
   handset: [
     { id: "hs-baton-rose", price: 18,     name: "Baton · rose gold", vendor: "ACHUTA stock", url: "",
       tags: ["Baton", "Rose gold"], img: "parts/hs-baton-rose.png",
-      includedSeconds: "parts/sec-thin-rose.png" },
+      includedSeconds: "parts/sec-thin-rose.png",
+      accepts: { mov_brand: "nh" } },
     { id: "hs-baton-steel", price: 18,    name: "Baton · steel", vendor: "ACHUTA stock", url: "",
       tags: ["Baton", "Steel"], img: "parts/hs-baton-steel.png",
-      includedSeconds: "parts/sec-thin-steel.png" },
+      includedSeconds: "parts/sec-thin-steel.png",
+      accepts: { mov_brand: "nh" } },
     { id: "hs-sword-gold", price: 22,     name: "Sword · gold", vendor: "ACHUTA stock", url: "",
       tags: ["Sword", "Gold"], img: "parts/hs-sword-gold.png",
-      includedSeconds: "parts/sec-thin-gold.png" },
+      includedSeconds: "parts/sec-thin-gold.png",
+      accepts: { mov_brand: "nh" } },
     { id: "hs-dauphine-steel", price: 19, name: "Dauphine · steel", vendor: "ACHUTA stock", url: "",
       tags: ["Dauphine", "Steel"], img: "parts/hs-dauphine-steel.png",
-      includedSeconds: "parts/sec-thin-steel.png" },
+      includedSeconds: "parts/sec-thin-steel.png",
+      accepts: { mov_brand: "nh" } },
     { id: "hs-arrow-onyx", price: 20,     name: "Arrow · onyx", vendor: "ACHUTA stock", url: "",
       tags: ["Arrow", "Onyx"], img: "parts/hs-arrow-onyx.png",
-      includedSeconds: "parts/sec-arrow-onyx.png" },
+      includedSeconds: "parts/sec-arrow-onyx.png",
+      accepts: { mov_brand: "nh" } },
     { id: "hs-alpha-rose", price: 19,     name: "Alpha · rose gold", vendor: "ACHUTA stock", url: "",
       tags: ["Alpha", "Rose gold"], img: "parts/hs-alpha-rose.png",
-      includedSeconds: "parts/sec-thin-rose.png" }
+      includedSeconds: "parts/sec-thin-rose.png",
+      accepts: { mov_brand: "nh" } }
   ],
 
   seconds: [
     { id: "sec-thin-rose", price: 9,  name: "Thin sweep · rose gold", vendor: "ACHUTA stock", url: "",
-      tags: ["Rose gold", "Thin"], img: "parts/sec-thin-rose.png" },
+      tags: ["Rose gold", "Thin"], img: "parts/sec-thin-rose.png",
+      accepts: { mov_brand: "nh" } },
     { id: "sec-thin-steel", price: 9, name: "Thin sweep · steel", vendor: "ACHUTA stock", url: "",
-      tags: ["Steel", "Thin"], img: "parts/sec-thin-steel.png" },
+      tags: ["Steel", "Thin"], img: "parts/sec-thin-steel.png",
+      accepts: { mov_brand: "nh" } },
     { id: "sec-lollipop", price: 12,   name: "Lollipop sweep · lume", vendor: "ACHUTA stock", url: "",
-      tags: ["Lume", "Lollipop"], img: "parts/sec-lollipop.png" },
+      tags: ["Lume", "Lollipop"], img: "parts/sec-lollipop.png",
+      accepts: { mov_brand: "nh" } },
     { id: "sec-signal", price: 10,     name: "Signal sweep · red", vendor: "ACHUTA stock", url: "",
-      tags: ["Red", "Thin"], img: "parts/sec-signal.png" },
+      tags: ["Red", "Thin"], img: "parts/sec-signal.png",
+      accepts: { mov_brand: "nh" } },
     { id: "sec-arrow-gold", price: 11, name: "Arrow sweep · gold", vendor: "ACHUTA stock", url: "",
-      tags: ["Gold", "Arrow"], img: "parts/sec-arrow-gold.png" },
+      tags: ["Gold", "Arrow"], img: "parts/sec-arrow-gold.png",
+      accepts: { mov_brand: "nh" } },
     { id: "sec-included", price: 0, name: "Included with handset", vendor: "No extra part",
       url: "", tags: ["Included"], featured: true, matchesHandset: true,
       note: "The hand your handset ships with",
-      img: "parts/sec-thin-rose.png" }
+      img: "parts/sec-thin-rose.png" }   /* follows the handset — no movement rule */
   ],
 
   /* NEW CATEGORIES are APPENDED here, and to CATS + HISTORY in

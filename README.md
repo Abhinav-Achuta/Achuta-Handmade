@@ -226,6 +226,14 @@ then featured, then catalogue order) and says what it changed. A part
 only greys out when it conflicts with a category listed *before* it
 (e.g. a band that doesn't fit the selected case), or when nothing in a
 later category fits it.
+
+**Hands ↔ movements:** every handset and seconds hand declares the
+movement family it fits, e.g. `accepts: { mov_brand: "nh" }`
+(movements carry `specs: { mov_brand: "nh" }` or `"vh"`). Use `"vh"`
+for VH-only hands, `["nh", "vh"]` (or nothing) for hands that fit
+both. Non-fitting hands grey out with "fits NH movements only", and a
+movement with no fitting hands at all greys out until you add some.
+"Included with handset" has no rule; it follows the handset.
 Codes issued before a rule tightened still load, with a heads-up.
 Bad rules (unknown comparators, category-as-spec, unknown ids, specs
 nothing declares) print console warnings when the builder loads.
