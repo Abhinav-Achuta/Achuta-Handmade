@@ -381,6 +381,31 @@
 }
 .total-fine{ font-size:.68rem; letter-spacing:.08em; color:var(--bone-4); }
 
+/* ═══ desktop running price (under the live watch) ═══ */
+.stage-price{
+  position:relative; z-index:1;
+  display:flex; flex-direction:column; align-items:center; gap:.45rem;
+  padding:.85rem 1.6rem .8rem;
+  border-top:1px solid var(--hair); border-bottom:1px solid var(--hair);
+}
+.stage-price-label{
+  font-size:.52rem; letter-spacing:.38em; text-indent:.38em;
+  text-transform:uppercase; color:var(--bone-4);
+}
+.stage-price-total{
+  font-family:var(--serif); font-weight:300;
+  font-size:1.9rem; line-height:1; color:var(--bone);
+  font-variant-numeric:tabular-nums;
+}
+.stage-price-total.bump{ animation:price-bump .9s ease; }
+@keyframes price-bump{ from{ color:var(--gold); } to{ color:var(--bone); } }
+/* leave room for caption + price on short desktop screens */
+@media (min-width:981px){
+  .stage .stack{ width:min(60vh, 82%, calc((100vh - 210px) * .75)); }
+}
+@media (max-width:980px){ .stage-price{ display:none; } }
+@media (prefers-reduced-motion:reduce){ .stage-price-total.bump{ animation:none; } }
+
 /* ═══ mobile mini summary bar ═══ */
 .mini-bar{
   position:fixed; left:0; right:0; bottom:0; z-index:45;
