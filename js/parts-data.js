@@ -201,7 +201,11 @@ var PARTS = {
     { id: "hs-alpha-rose", price: 19,     name: "Alpha · rose gold", vendor: "ACHUTA stock", url: "",
       tags: ["Alpha", "Rose gold"], img: "parts/hs-alpha-rose.png",
       includedSeconds: "parts/sec-thin-rose.png",
-      accepts: { mov_brand: "nh" } }
+      accepts: { mov_brand: "vh" } },
+    { id: "hs-baton-silver", price: 16,     name: "Baton · silver", vendor: "ACHUTA stock", url: "",
+      tags: ["Baton", "silver"], img: "parts/hs-silver-baton-vh31.png",
+      includedSeconds: "parts/sec-silver-baton-vh31.png",
+      accepts: { mov_brand: "vh" } }
   ],
 
   seconds: [
@@ -220,6 +224,9 @@ var PARTS = {
     { id: "sec-arrow-gold", price: 11, name: "Arrow sweep · gold", vendor: "ACHUTA stock", url: "",
       tags: ["Gold", "Arrow"], img: "parts/sec-arrow-gold.png",
       accepts: { mov_brand: "nh" } },
+    { id: "sec-baton-silver", price: 16, name: "Baton · silver", vendor: "ACHUTA stock", url: "",
+      tags: ["Baton", "Silver", "LUME"], img: "parts/sec-silver-baton-vh31.png",
+      accepts: { mov_brand: "vh" } },
     { id: "sec-included", price: 0, name: "Included with handset", vendor: "No extra part",
       url: "", tags: ["Included"], featured: true, matchesHandset: true,
       note: "The hand your handset ships with",
