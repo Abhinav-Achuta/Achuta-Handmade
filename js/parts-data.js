@@ -173,6 +173,8 @@ var PARTS = {
       tags: ["Pilot"], img: "parts/dial-blue-green-pilot.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "pilot", swatch: "#252C3E" },
     { id: "dial-green-green-pilot", price: 25, name: "Vintage Pilot green-green", vendor: "ACHUTA stock", url: "",
       tags: ["Pilot"], img: "parts/dial-green-green-pilot.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "pilot", swatch: "#414D41" },
+    { id: "dial-malachite-black", price: 15, name: "Malachite sandstone black", vendor: "ACHUTA stock", url: "",
+      tags: ["Stone"], img: "parts/dial-malachite-black.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "malachite", swatch: "#0e0f0e" },
   ],
 
   /* MOVEMENT FIT — hands are made for one movement family. Each hand
@@ -218,6 +220,10 @@ var PARTS = {
       group: "baton-vh31", swatch: "#c98a5f",
       includedSeconds: "parts/sec-rose-gold-baton-vh31.png",
       accepts: { mov_brand: "vh" } },
+    { id: "hs-mercedes-silver-vh31", price: 5,     name: "Mercedes · silver", vendor: "ACHUTA stock", url: "",
+      tags: ["mercedes", "silver", "LUME"], img: "parts/hs-mercedes-silver-vh31.png",
+      includedSeconds: "parts/sec-mercedes-blue-vh31.png",
+      accepts: { mov_brand: "vh" } },
   ],
 
   seconds: [
@@ -247,7 +253,20 @@ var PARTS = {
     { id: "sec-included", price: 0, name: "Included with handset", vendor: "No extra part",
       url: "", tags: ["Included"], featured: true, matchesHandset: true,
       note: "The hand your handset ships with",
-      img: "parts/sec-thin-rose.png" }
+      img: "parts/sec-thin-rose.png" },
+    { id: "sec-mercedes-blue-vh31", price: 5, name: "Mercedes · blue", vendor: "ACHUTA Stock", url: "",
+      tags: ["LUME", "Mercedes", "Blue"], img: "parts/sec-mercedes-blue-vh31.png",
+      group: "mercedes-sec-vh31", swatch: "#5b5fd1",
+      accepts: { mov_brand: "vh" } },
+    { id: "sec-mercedes-red-vh31", price: 5, name: "Mercedes · red", vendor: "ACHUTA Stock", url: "",
+      tags: ["LUME", "Mercedes", "Red"], img: "parts/sec-mercedes-red-vh31.png",
+      group: "mercedes-sec-vh31", swatch: "#971010",
+      accepts: { mov_brand: "vh" } },
+    { id: "sec-mercedes-green-vh31", price: 5, name: "Mercedes · green", vendor: "ACHUTA Stock", url: "",
+      tags: ["LUME", "Mercedes", "Green"], img: "parts/sec-mercedes-green-vh31.png",
+      group: "mercedes-sec-vh31", swatch: "#065c45",
+      accepts: { mov_brand: "vh" } },
+    
   ],
 
   /* NEW CATEGORIES are APPENDED here, and to CATS + HISTORY in
