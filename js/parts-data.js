@@ -113,7 +113,13 @@ var PARTS = {
       tags: ["pilot", "Steel"], img: "parts/case-pilot-steel.png",
       note: "pilot style · 36mm case diameter",
       accepts: { mov_brand: ["nh", "vh"], dial_mm: { max: 28.5 } },
-      compatible: { band: ["band-leather-cognac", "band-leather-noir", "band-rubber-noir"] } }
+      compatible: { band: ["band-leather-cognac", "band-leather-noir", "band-rubber-noir"] } },
+    { id: "case-prx-steel", price: 50,   name: "PRX · steel", vendor: "Grayss", url: "",
+      group: "prx", swatch: "#cfd2d6",
+      tags: ["prx", "Steel"], img: "parts/case-prx-steel.png",
+      note: "prx style · 40mm case diameter",
+      accepts: { mov_brand: ["nh", "vh"], dial_mm: { max: 28.5 } },
+      compatible: { band: ["band-prx-steel"] } },
   ],
 
   movement: [
@@ -167,6 +173,8 @@ var PARTS = {
       tags: ["Pilot"], img: "parts/dial-blue-green-pilot.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "pilot", swatch: "#252C3E" },
     { id: "dial-green-green-pilot", price: 25, name: "Vintage Pilot green-green", vendor: "ACHUTA stock", url: "",
       tags: ["Pilot"], img: "parts/dial-green-green-pilot.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "pilot", swatch: "#414D41" },
+    { id: "dial-malachite-black", price: 15, name: "Malachite sandstone black", vendor: "ACHUTA stock", url: "",
+      tags: ["Stone"], img: "parts/dial-malachite-black.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "malachite", swatch: "#0e0f0e" },
   ],
 
   /* MOVEMENT FIT — hands are made for one movement family. Each hand
@@ -202,10 +210,20 @@ var PARTS = {
       tags: ["Alpha", "Rose gold"], img: "parts/hs-alpha-rose.png",
       includedSeconds: "parts/sec-thin-rose.png",
       accepts: { mov_brand: "vh" } },
-    { id: "hs-baton-silver", price: 16,     name: "Baton · silver", vendor: "ACHUTA stock", url: "",
-      tags: ["Baton", "silver"], img: "parts/hs-silver-baton-vh31.png",
+    { id: "hs-baton-silver-vh31", price: 16,     name: "Baton · silver", vendor: "Mosberg", url: "",
+      tags: ["Baton", "silver", "LUME"], img: "parts/hs-silver-baton-vh31.png",
+      group: "baton-vh31", swatch: "#cfd2d6",
       includedSeconds: "parts/sec-silver-baton-vh31.png",
-      accepts: { mov_brand: "vh" } }
+      accepts: { mov_brand: "vh" } },
+    { id: "hs-baton-rose-gold-vh31", price: 16,     name: "Baton · rose gold", vendor: "Mosberg", url: "",
+      tags: ["Baton", "Rose gold", "LUME"], img: "parts/hs-rose-gold-baton-vh31.png",
+      group: "baton-vh31", swatch: "#c98a5f",
+      includedSeconds: "parts/sec-rose-gold-baton-vh31.png",
+      accepts: { mov_brand: "vh" } },
+    { id: "hs-mercedes-silver-vh31", price: 5,     name: "Mercedes · silver", vendor: "ACHUTA stock", url: "",
+      tags: ["mercedes", "silver", "LUME"], img: "parts/hs-mercedes-silver-vh31.png",
+      includedSeconds: "parts/sec-mercedes-blue-vh31.png",
+      accepts: { mov_brand: "vh" } },
   ],
 
   seconds: [
@@ -224,13 +242,31 @@ var PARTS = {
     { id: "sec-arrow-gold", price: 11, name: "Arrow sweep · gold", vendor: "ACHUTA stock", url: "",
       tags: ["Gold", "Arrow"], img: "parts/sec-arrow-gold.png",
       accepts: { mov_brand: "nh" } },
-    { id: "sec-baton-silver", price: 16, name: "Baton · silver", vendor: "ACHUTA stock", url: "",
+    { id: "sec-baton-silver-vh31", price: 16, name: "Baton · silver", vendor: "Mosberg", url: "",
       tags: ["Baton", "Silver", "LUME"], img: "parts/sec-silver-baton-vh31.png",
+      group: "baton-sec-vh31", swatch: "#cfd2d6",
+      accepts: { mov_brand: "vh" } },
+    { id: "sec-rose-gold-vh31", price: 16, name: "Baton · rose gold", vendor: "Mosberg", url: "",
+      tags: ["Baton", "Rose gold", "LUME"], img: "parts/sec-rose-gold-baton-vh31.png",
+      group: "baton-sec-vh31", swatch: "#c98a5f",
       accepts: { mov_brand: "vh" } },
     { id: "sec-included", price: 0, name: "Included with handset", vendor: "No extra part",
       url: "", tags: ["Included"], featured: true, matchesHandset: true,
       note: "The hand your handset ships with",
-      img: "parts/sec-thin-rose.png" }   /* follows the handset — no movement rule */
+      img: "parts/sec-thin-rose.png" },
+    { id: "sec-mercedes-blue-vh31", price: 5, name: "Mercedes · blue", vendor: "ACHUTA Stock", url: "",
+      tags: ["LUME", "Mercedes", "Blue"], img: "parts/sec-mercedes-blue-vh31.png",
+      group: "mercedes-sec-vh31", swatch: "#5b5fd1",
+      accepts: { mov_brand: "vh" } },
+    { id: "sec-mercedes-red-vh31", price: 5, name: "Mercedes · red", vendor: "ACHUTA Stock", url: "",
+      tags: ["LUME", "Mercedes", "Red"], img: "parts/sec-mercedes-red-vh31.png",
+      group: "mercedes-sec-vh31", swatch: "#971010",
+      accepts: { mov_brand: "vh" } },
+    { id: "sec-mercedes-green-vh31", price: 5, name: "Mercedes · green", vendor: "ACHUTA Stock", url: "",
+      tags: ["LUME", "Mercedes", "Green"], img: "parts/sec-mercedes-green-vh31.png",
+      group: "mercedes-sec-vh31", swatch: "#065c45",
+      accepts: { mov_brand: "vh" } },
+    
   ],
 
   /* NEW CATEGORIES are APPENDED here, and to CATS + HISTORY in
@@ -257,7 +293,10 @@ var PARTS = {
     { id: "band-leather-noir", price: 26,   name: "Leather · noir", vendor: "ACHUTA stock", url: "",
       tags: ["Leather", "Noir"], img: "parts/band-leather-noir.png" },
     { id: "band-leather-cognac", price: 26, name: "Leather · cognac", vendor: "ACHUTA stock", url: "",
-      tags: ["Leather", "Cognac"], img: "parts/band-leather-cognac.png" }
+      tags: ["Leather", "Cognac"], img: "parts/band-leather-cognac.png" },
+    { id: "band-prx-steel", price: 0, name: "PRX · steel", vendor: "Grayss", url: "",
+      group: "prx", swatch: "#cfd2d6",
+      tags: ["prx", "steel"], img: "parts/band-prx-steel.png" },
   ],
 
   /* GMT HANDS — only offered while the selected movement lists "gmt"

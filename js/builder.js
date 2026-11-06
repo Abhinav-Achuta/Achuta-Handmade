@@ -23,7 +23,7 @@
   ];
 
   /* default = the watch from the films */
-  var state = { case: 0, band: 0, movement: 0, dial: 0, handset: 0, seconds: 5, gmthand: 0, datewheel: 0 };
+  var state = { case: 0, band: 0, movement: 0, dial: 0, handset: 0, seconds: Math.max(0, PARTS.seconds.findIndex(function (p) { return p.matchesHandset; })), gmthand: 0, datewheel: 0 };
   var filters = { case: null, band: null, movement: null, dial: null, handset: null, seconds: null, gmthand: null, datewheel: null };
 
   function part(cat) { return PARTS[cat][state[cat]]; }
@@ -113,6 +113,28 @@
     for (var i = 0; i < CATS.length; i++) if (CATS[i].id === id) return i;
     return -1;
   }
+  /* When the handset changes and the seconds hand currently matches the old
+     handset (its image is the old handset's includedSeconds), switch the
+     seconds hand to the one that matches the new handset: the separate part
+     whose img equals the new includedSeconds, or "Included with handset" if
+     there is none. A deliberately different seconds hand is left alone.
+     Edits s in place and returns the swaps it made. */
+  function matchSeconds(s, catId, P) {
+    if (catId !== "handset" || !PARTS.seconds) return [];
+    var oldH = PARTS.handset[state.handset], cur = PARTS.seconds[s.seconds];
+    if (!oldH || oldH === P || !cur || cur.matchesHandset) return [];
+    if (!oldH.includedSeconds || cur.img !== oldH.includedSeconds) return [];
+    var pick = -1, inc = -1;
+    PARTS.seconds.forEach(function (sp, j) {
+      if (sp.matchesHandset) { if (inc < 0) inc = j; }
+      else if (pick < 0 && P.includedSeconds && sp.img === P.includedSeconds) pick = j;
+    });
+    if (pick < 0) pick = inc;
+    if (pick < 0 || pick === s.seconds) return [];
+    var sw = [{ cat: "seconds", from: s.seconds, to: pick }];
+    s.seconds = pick;
+    return sw;
+  }
   function planChoice(catId, i) {
     var s = {}, k;
     for (k in state) s[k] = state[k];
@@ -125,6 +147,8 @@
     var hard = conflictIn(s, catId, P, above);
     if (hard) return { err: hard };
 
+    var swaps = matchSeconds(s, catId, P);
+
     /* later categories whose current part no longer fits */
     var pending = {}, firstWhy = {}, any = false;
     CATS.forEach(function (c, ci) {
@@ -132,9 +156,8 @@
       var r = conflictIn(s, c.id, PARTS[c.id][s[c.id]]);
       if (r) { pending[c.id] = true; firstWhy[c.id] = r; any = true; }
     });
-    if (!any) return { state: s, swaps: [] };
+    if (!any) return { state: s, swaps: swaps };
 
-    var swaps = [];
     for (var ci = at + 1; ci < CATS.length; ci++) {
       var cid = CATS[ci].id;
       if (!pending[cid]) continue;
@@ -154,7 +177,8 @@
         if (!conflictIn(s, cid, parts[order[o]], pending)) { pick = order[o]; break; }
       }
       if (pick < 0) return { err: "No " + catById(cid).name.toLowerCase() + " in the catalogue fits " + P.name + " yet" };   /* nothing in that category fits */
-      swaps.push({ cat: cid, from: s[cid], to: pick });
+      var prev = swaps.filter(function (w) { return w.cat === cid; })[0];   /* already swapped by matchSeconds */
+      if (prev) prev.to = pick; else swaps.push({ cat: cid, from: s[cid], to: pick });
       s[cid] = pick;
     }
     return { state: s, swaps: swaps };
@@ -272,7 +296,26 @@
         whyEl.textContent = whyText || hint || "";
         whyEl.classList.toggle("is-swap", !!hint);
       });
+      sortCards(cat.id);
     });
+  }
+
+  /* move selectable cards to the front of their grid, greyed ones to the back.
+     Within each half the original order (featured first, then data order) is kept. */
+  function sortCards(catId) {
+    var regs = CARDREG[catId] || [];
+    if (!regs.length) return;
+    var grid = regs[0].el.parentNode;
+    if (!grid) return;
+    var want = regs.filter(function (r) { return !r.el.classList.contains("is-off"); })
+      .concat(regs.filter(function (r) { return r.el.classList.contains("is-off"); }))
+      .map(function (r) { return r.el; });
+    var have = [].slice.call(grid.children);
+    if (want.every(function (el, i) { return have[i] === el; })) return;   /* already in order */
+    var focused = document.activeElement;
+    want.forEach(function (el) { grid.appendChild(el); });
+    if (focused && grid.contains(focused) && document.activeElement !== focused)
+      focused.focus({ preventScroll: true });
   }
   function refreshCompat() { updateCards(); }
 
@@ -423,6 +466,14 @@
     if (totalEl) totalEl.textContent = fmtPrice(total);
     var mt = document.getElementById("mini-total");
     if (mt) mt.textContent = fmtPrice(total);
+    var st = document.getElementById("stage-total");
+    if (st && st.textContent !== fmtPrice(total)) {
+      var first = st.textContent === "—";
+      st.textContent = fmtPrice(total);
+      if (!first) {                                   /* brief gold flash when the price changes */
+        st.classList.remove("bump"); void st.offsetWidth; st.classList.add("bump");
+      }
+    }
     var noteEl = document.getElementById("est-note");
     if (noteEl && typeof PRICING !== "undefined") noteEl.textContent = PRICING.note;
 
