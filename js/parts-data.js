@@ -113,7 +113,13 @@ var PARTS = {
       tags: ["pilot", "Steel"], img: "parts/case-pilot-steel.png",
       note: "pilot style · 36mm case diameter",
       accepts: { mov_brand: ["nh", "vh"], dial_mm: { max: 28.5 } },
-      compatible: { band: ["band-leather-cognac", "band-leather-noir", "band-rubber-noir"] } }
+      compatible: { band: ["band-leather-cognac", "band-leather-noir", "band-rubber-noir"] } },
+    { id: "case-prx-steel", price: 50,   name: "PRX · steel", vendor: "Grayss", url: "",
+      group: "prx", swatch: "#cfd2d6",
+      tags: ["prx", "Steel"], img: "parts/case-prx-steel.png",
+      note: "prx style · 40mm case diameter",
+      accepts: { mov_brand: ["nh", "vh"], dial_mm: { max: 28.5 } },
+      compatible: { band: ["band-prx-steel"] } },
   ],
 
   movement: [
@@ -241,7 +247,7 @@ var PARTS = {
     { id: "sec-included", price: 0, name: "Included with handset", vendor: "No extra part",
       url: "", tags: ["Included"], featured: true, matchesHandset: true,
       note: "The hand your handset ships with",
-      img: "parts/sec-thin-rose.png" }   /* follows the handset — no movement rule */
+      img: "parts/sec-thin-rose.png" }
   ],
 
   /* NEW CATEGORIES are APPENDED here, and to CATS + HISTORY in
@@ -268,7 +274,10 @@ var PARTS = {
     { id: "band-leather-noir", price: 26,   name: "Leather · noir", vendor: "ACHUTA stock", url: "",
       tags: ["Leather", "Noir"], img: "parts/band-leather-noir.png" },
     { id: "band-leather-cognac", price: 26, name: "Leather · cognac", vendor: "ACHUTA stock", url: "",
-      tags: ["Leather", "Cognac"], img: "parts/band-leather-cognac.png" }
+      tags: ["Leather", "Cognac"], img: "parts/band-leather-cognac.png" },
+    { id: "band-prx-steel", price: 0, name: "PRX · steel", vendor: "Grayss", url: "",
+      group: "prx", swatch: "#cfd2d6",
+      tags: ["prx", "steel"], img: "parts/band-prx-steel.png" },
   ],
 
   /* GMT HANDS — only offered while the selected movement lists "gmt"
