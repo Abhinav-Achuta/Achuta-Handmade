@@ -123,17 +123,17 @@ var PARTS = {
   ],
 
   movement: [
-    { id: "mov-nh35", price: 38, name: "Seiko NH35", vendor: "Seiko · TMI", url: "",
+    { id: "mov-nh35", price: 105, name: "Seiko NH35", vendor: "Seiko · TMI", url: "",
       tags: ["Date", "Hacking"], img: "parts/mov-nh35.png",
       windows: ["date"], bps: 6,
       spec: "Automatic · date · 21,600 vph · sweeping seconds", 
       specs: { mov_brand: "nh" } },
-    { id: "mov-nh36", price: 46, name: "Seiko NH36", vendor: "Seiko · TMI", url: "",
+    { id: "mov-nh36", price: 110, name: "Seiko NH36", vendor: "Seiko · TMI", url: "",
       tags: ["Day-date", "Hacking"], img: "parts/mov-nh36.png",
       windows: ["daydate"], bps: 6,
       spec: "Automatic · day-date · 21,600 vph · sweeping seconds",
       specs: { mov_brand: "nh" } },
-    { id: "mov-nh38", price: 42, name: "Seiko NH38", vendor: "Seiko · TMI", url: "",
+    { id: "mov-nh38", price: 92, name: "Seiko NH38", vendor: "Seiko · TMI", url: "",
       tags: ["No date", "Hacking"], img: "parts/mov-nh38.png",
       windows: [], bps: 6,
       spec: "Automatic · no date · clean dial · sweeping seconds",
@@ -143,7 +143,7 @@ var PARTS = {
       windows: ["date", "gmt"], bps: 6,
       spec: "Automatic · true GMT · date · sweeping seconds",
       specs: { mov_brand: "nh" } },
-    { id: "mov-vh31", price: 25, name: "Seiko VH31", vendor: "Seiko · TMI", url: "",
+    { id: "mov-vh31", price: 30, name: "Seiko VH31", vendor: "Seiko · TMI", url: "",
       tags: ["Quartz", "No date", "Hacking"], img: "parts/mov-vh31.png",
       windows: [], bps: 4,
       spec: "Quartz · sweeping seconds",
@@ -151,30 +151,43 @@ var PARTS = {
   ],
 
   dial: [
-    // { id: "dial-salmon", price: 32, name: "Salmon tapisserie", vendor: "ACHUTA stock", url: "",
-    //   tags: ["Warm", "Tapisserie"], img: "parts/dial-salmon.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
-    // { id: "dial-blue", price: 32,   name: "Midnight tapisserie", vendor: "ACHUTA stock", url: "",
-    //   tags: ["Cool", "Tapisserie"], img: "parts/dial-blue.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
-    // { id: "dial-forest", price: 32, name: "Forest tapisserie", vendor: "ACHUTA stock", url: "",
-    //   tags: ["Cool", "Tapisserie"], img: "parts/dial-forest.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
-    // { id: "dial-noir", price: 28,   name: "Noir sunburst", vendor: "ACHUTA stock", url: "",
-    //   tags: ["Dark", "Sunburst"], img: "parts/dial-noir.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
-    // { id: "dial-fume", price: 34,   name: "Charcoal fumé", vendor: "ACHUTA stock", url: "",
-    //   tags: ["Dark", "Sunburst"], img: "parts/dial-fume.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
-    // { id: "dial-ivory", price: 30,  name: "Ivory matte", vendor: "ACHUTA stock", url: "",
-    //   tags: ["Light", "Matte"], img: "parts/dial-ivory.png", note: "ø 31 mm", specs: { dial_mm: 31 } },
+
+    // Khaki-field
     { id: "dial-khaki-field-black", price: 10, name: "Khaki Field Black", vendor: "ACHUTA stock", url: "",
       tags: ["Dark", "Field", "Textured"], img: "parts/dial-khaki-field-black.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "khaki-field", swatch: "#000000" },
-    { id: "dial-openheart-hammered-green", price: 58,  name: "Open heart Hammered Pattern - Green", vendor: "dialmaker.shop", url: "",
-      tags: ["Open Heart", "Textured"], img: "parts/dial-openheart-hammered-green.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
     { id: "dial-khaki-field-white", price: 10, name: "Khaki Field White", vendor: "ACHUTA stock", url: "",
       tags: ["Light", "Field", "Textured"], img: "parts/dial-khaki-field-white.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "khaki-field", swatch: "#FFFFFF" },
+
+    // Openheart hammered
+    { id: "dial-openheart-hammered-green", price: 58,  name: "Open heart Hammered Pattern - Green", vendor: "dialmaker.shop", url: "",
+      tags: ["Open Heart", "Textured"], img: "parts/dial-openheart-hammered-green.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 } },
+
+    // Pilot
     { id: "dial-blue-green-pilot", price: 25, name: "Vintage Pilot blue-green", vendor: "ACHUTA stock", url: "",
       tags: ["Pilot"], img: "parts/dial-blue-green-pilot.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "pilot", swatch: "#252C3E" },
     { id: "dial-green-green-pilot", price: 25, name: "Vintage Pilot green-green", vendor: "ACHUTA stock", url: "",
       tags: ["Pilot"], img: "parts/dial-green-green-pilot.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "pilot", swatch: "#414D41" },
+
+    // Malachite
     { id: "dial-malachite-black", price: 15, name: "Malachite sandstone black", vendor: "ACHUTA stock", url: "",
       tags: ["Stone"], img: "parts/dial-malachite-black.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "malachite", swatch: "#0e0f0e" },
+    
+    // Pinecone
+    { id: "dial-pinecone-black", price: 15, name: "Pinecone black", vendor: "ACHUTA stock", url: "",
+      tags: ["Textured", "Black"], img: "parts/dial-pinecone-black.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "pinecone", swatch: "#0e0f0e" },
+    { id: "dial-pinecone-green", price: 15, name: "Pinecone green", vendor: "ACHUTA stock", url: "",
+      tags: ["Textured", "Green"], img: "parts/dial-pinecone-green.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "pinecone", swatch: "#06532F" },
+    { id: "dial-pinecone-purple", price: 15, name: "Pinecone purple", vendor: "ACHUTA stock", url: "",
+      tags: ["Textured", "purple"], img: "parts/dial-pinecone-purple.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "pinecone", swatch: "#8C4C76" },
+    { id: "dial-pinecone-red", price: 15, name: "Pinecone red", vendor: "ACHUTA stock", url: "",
+      tags: ["Textured", "red"], img: "parts/dial-pinecone-red.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "pinecone", swatch: "#951116" },
+    { id: "dial-pinecone-rose", price: 15, name: "Pinecone rose", vendor: "ACHUTA stock", url: "",
+      tags: ["Textured", "rose"], img: "parts/dial-pinecone-rose.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "pinecone", swatch: "#845F5E" },
+    { id: "dial-pinecone-torquoise", price: 15, name: "Pinecone torquoise", vendor: "ACHUTA stock", url: "",
+      tags: ["Textured", "torquoise"], img: "parts/dial-pinecone-torquoise.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "pinecone", swatch: "#639791" },
+    { id: "dial-pinecone-white", price: 15, name: "Pinecone white", vendor: "ACHUTA stock", url: "",
+      tags: ["Textured", "white"], img: "parts/dial-pinecone-white.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "pinecone", swatch: "#ecf1f1ff" },
+      
   ],
 
   /* MOVEMENT FIT — hands are made for one movement family. Each hand
