@@ -127,7 +127,8 @@ var PARTS = {
       tags: ["Date", "Hacking"], img: "parts/mov-nh35.png",
       windows: ["date"], bps: 6,
       spec: "Automatic · date · 21,600 vph · sweeping seconds", 
-      specs: { mov_brand: "nh" } },
+      specs: { mov_brand: "nh" },
+      accepts: {dial_complication: ["date"]} },
     { id: "mov-nh36", price: 110, name: "Seiko NH36", vendor: "Seiko · TMI", url: "",
       tags: ["Day-date", "Hacking"], img: "parts/mov-nh36.png",
       windows: ["daydate"], bps: 6,
@@ -187,6 +188,16 @@ var PARTS = {
       tags: ["Textured", "torquoise"], img: "parts/dial-pinecone-torquoise.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "pinecone", swatch: "#639791" },
     { id: "dial-pinecone-white", price: 15, name: "Pinecone white", vendor: "ACHUTA stock", url: "",
       tags: ["Textured", "white"], img: "parts/dial-pinecone-white.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "pinecone", swatch: "#ecf1f1ff" },
+
+    // Wave
+    { id: "dial-wave-blue", price: 25, name: "Wave blue", vendor: "Richus Watch Store", url: "",
+      tags: ["Textured", "Blue"], img: "parts/dial-wave-blue.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "wave", swatch: "rgb(31, 70, 224)" },
+    { id: "dial-wave-red", price: 25, name: "Wave red", vendor: "Richus Watch Store", url: "",
+      tags: ["Textured", "Red"], img: "parts/dial-wave-red.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "wave", swatch: "rgb(201, 37, 56)" },
+    { id: "dial-wave-green", price: 25, name: "Wave green", vendor: "Richus Watch Store", url: "",
+      tags: ["Textured", "Green"], img: "parts/dial-wave-green.png", note: "ø 28.5 mm", specs: { dial_mm: 28.5 }, group: "wave", swatch: "rgb(23, 166, 78)" },
+    
+
       
   ],
 
