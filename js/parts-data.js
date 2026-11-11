@@ -113,7 +113,7 @@ var PARTS = {
       tags: ["pilot", "Steel"], img: "parts/case-pilot-steel.png",
       note: "pilot style · 36mm case diameter",
       accepts: { mov_brand: ["nh", "vh"], dial_mm: { max: 28.5 } },
-      compatible: { band: ["band-leather-cognac", "band-leather-noir", "band-rubber-noir", "band-nato-black-and-grey"] } },
+      compatible: { band: ["band-leather-cognac", "band-leather-noir", "band-rubber-noir", "band-nato-black-and-grey", "band-leather-aviator-midnight", "band-leather-aviator-green"] } },
     { id: "case-prx-steel", price: 50,   name: "PRX · steel", vendor: "Grayss", url: "",
       group: "prx", swatch: "#cfd2d6",
       tags: ["prx", "Steel"], img: "parts/case-prx-steel.png",
@@ -329,6 +329,9 @@ var PARTS = {
     { id: "band-leather-aviator-midnight", price: 25, name: "Aviator · midnight", vendor: "CNS watch bands", url: "https://cnswatchbands.com/products/aviator-midnight",
       group: "leather-aviator", swatch: "#4F576B",
       tags: ["leather", "aviator"], img: "parts/band-leather-aviator-midnight.png" },
+    { id: "band-leather-aviator-green", price: 25, name: "Aviator · green", vendor: "CNS watch bands", url: "https://cnswatchbands.com/products/aviator-british-racing-green",
+      group: "leather-aviator", swatch: "#3D3F31",
+      tags: ["leather", "aviator", "green"], img: "parts/band-leather-aviator-green.png" },
     
     
   ],
