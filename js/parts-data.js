@@ -114,7 +114,7 @@ var PARTS = {
       note: "pilot style · 36mm case diameter",
       accepts: { mov_brand: ["nh", "vh"], dial_mm: { max: 28.5 } },
       compatible: { band: ["band-leather-cognac", "band-leather-noir", "band-rubber-noir", "band-nato-black-and-grey"] } },
-    { id: "case-prx-steel", price: 50,   name: "PRX · steel", vendor: "Grayss", url: "https://cnswatchbands.com/products/ribbed-strap-black-and-gray-james-bond",
+    { id: "case-prx-steel", price: 50,   name: "PRX · steel", vendor: "Grayss", url: "",
       group: "prx", swatch: "#cfd2d6",
       tags: ["prx", "Steel"], img: "parts/case-prx-steel.png",
       note: "prx style · 40mm case diameter",
@@ -321,9 +321,13 @@ var PARTS = {
     { id: "band-prx-steel", price: 0, name: "PRX · steel", vendor: "Grayss", url: "",
       group: "prx", swatch: "#cfd2d6",
       tags: ["prx", "steel"], img: "parts/band-prx-steel.png" },
-    { id: "band-nato-black-and-grey", price: 15, name: "NATO · black and grey", vendor: "CNS watch bands", url: "",
+    { id: "band-nato-black-and-grey", price: 15, name: "NATO · black and grey", vendor: "CNS watch bands", url: "https://cnswatchbands.com/products/ribbed-strap-black-and-gray-james-bond",
       group: "nato-striped", swatch: "#737679",
-      tags: ["NATO", "striped", "black", "grey"], img: "parts/band-nato-black-and-grey.png" },
+      tags: ["NATO", "black", "striped", "grey"], img: "parts/band-nato-olive.png" },
+    { id: "band-nato-olive", price: 15, name: "NATO · olive", vendor: "CNS watch bands", url: "https://cnswatchbands.com/original-strap-olive/",
+      group: "nato", swatch: "#696B4C",
+      tags: ["NATO", "olive"], img: "parts/band-nato-olive.png" },
+    
   ],
 
   /* GMT HANDS — only offered while the selected movement lists "gmt"
