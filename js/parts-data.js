@@ -314,6 +314,8 @@ var PARTS = {
       tags: ["Bracelet", "Gold"], img: "parts/band-bracelet-gold.png" },
     { id: "band-rubber-noir", price: 22,    name: "Rubber · noir", vendor: "ACHUTA stock", url: "",
       tags: ["Rubber", "Noir"], img: "parts/band-rubber-noir.png" },
+    
+    // Leather
     { id: "band-leather-noir", price: 26,   name: "Leather · noir", vendor: "ACHUTA stock", url: "",
       tags: ["Leather", "Noir"], img: "parts/band-leather-noir.png" },
     { id: "band-leather-cognac", price: 26, name: "Leather · cognac", vendor: "ACHUTA stock", url: "",
@@ -323,10 +325,11 @@ var PARTS = {
       tags: ["prx", "steel"], img: "parts/band-prx-steel.png" },
     { id: "band-nato-black-and-grey", price: 15, name: "NATO · black and grey", vendor: "CNS watch bands", url: "https://cnswatchbands.com/products/ribbed-strap-black-and-gray-james-bond",
       group: "nato-striped", swatch: "#737679",
-      tags: ["NATO", "black", "striped", "grey"], img: "parts/band-nato-olive.png" },
-    { id: "band-nato-olive", price: 15, name: "NATO · olive", vendor: "CNS watch bands", url: "https://cnswatchbands.com/original-strap-olive/",
-      group: "nato", swatch: "#696B4C",
-      tags: ["NATO", "olive"], img: "parts/band-nato-olive.png" },
+      tags: ["NATO", "black", "striped", "grey"], img: "parts/band-nato-black-and-grey.png" },
+    { id: "band-leather-aviator-midnight", price: 25, name: "Aviator · midnight", vendor: "CNS watch bands", url: "https://cnswatchbands.com/products/aviator-midnight",
+      group: "leather-aviator", swatch: "#4F576B",
+      tags: ["leather", "aviator"], img: "parts/band-leather-aviator-midnight.png" },
+    
     
   ],
 
