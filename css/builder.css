@@ -345,7 +345,7 @@
 
 /* ═══ colour-variant dots ═══ */
 .card--group{ cursor:pointer; }
-.dots{ display:flex; gap:.45rem; padding-top:.1rem; }
+.dots{ display:flex; flex-wrap:wrap; gap:.45rem; padding-top:.1rem; padding-right:3px; min-width:0; }   /* wrap so many colours stay inside the card on phones */
 .dot{
   appearance:none; border:1px solid rgba(234,227,214,.3); padding:0;
   width:15px; height:15px; border-radius:50%; cursor:pointer; flex:none;
