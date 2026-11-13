@@ -79,7 +79,7 @@ var LAYERS = {
   gmt: 45,         /* the selected GMT hand (gmthand category)         */
   handset: 50,
   seconds: 60,
-  case: 70         /* on top: the bezel overlaps the dial edge,        */
+  case: 25         /* on top: the bezel overlaps the dial edge,        */
 };                 /* like a real watch                                */
 
 var PARTS = {
@@ -121,7 +121,7 @@ var PARTS = {
       accepts: { mov_brand: ["nh", "vh"], dial_mm: { max: 28.5 } },
       compatible: { band: ["band-prx-steel"] } },
     { id: "case-field-nmk912-steel", price: 120,   name: "Field · steel", vendor: "Namoki", url: "https://www.namokimods.com/products/nmk912-field-watch-case-polished-finish?_pos=41&_sid=e41612c2a&_ss=r&_su_rec=xZFVbLwuwKW_BcEzRjUY-ZzJEkef_zsNImKQiTz1Z43P5NmkO80tLkz5_0i7Z9Hu54-HlP13Fl2xdlrx1W7U9eFA1Vbig3NvYDWS7cgOzDLfw-RHMXgkWohL4BSjg9XmxgOSH21Pik0FBTyffxT2Zt6IyXfiG2IsbEt2bLAiX7j5VVSY226LzMdj2-x8PWASTPwNuc9IZFN6IRkytx0SmH7hC_QFaA_AsdRW2uOC93g1p4UPmm7GPlNzXpG2IGtchwpr3OLX0Ostia_EiioOTWOUhdOhMo9vBIyeogoJShQX8DiQNfVNywCc0D6Bbnbw92TVofviW7MncLkDUUrAYnjyHA&_su_rec_id=cb4d7e73-cd5a-4d75-8c32-c746eb4a2c71-1794510921",
-      group: "pilot", swatch: "#B8ADAB",
+      group: "field", swatch: "#B8ADAB",
       tags: ["field", "Steel"], img: "parts/case-field-nmk912-steel.png",
       note: "Khaki field style · 38mm case diameter",
       accepts: { mov_brand: ["nh", "vh"], dial_mm: { max: 28.5 } },
