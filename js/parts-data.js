@@ -79,7 +79,7 @@ var LAYERS = {
   gmt: 45,         /* the selected GMT hand (gmthand category)         */
   handset: 50,
   seconds: 60,
-  case: 25         /* on top: the bezel overlaps the dial edge,        */
+  case: 70         /* on top: the bezel overlaps the dial edge,        */
 };                 /* like a real watch                                */
 
 var PARTS = {
